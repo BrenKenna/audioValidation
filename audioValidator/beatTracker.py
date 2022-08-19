@@ -29,6 +29,7 @@ import librosa.display
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 # 1. Get the file path to an included audio example
 filename = librosa.example('nutcracker')
 
@@ -159,7 +160,8 @@ plt.savefig('beat-features.png')
 chroma_stft = librosa.feature.chroma_stft(
     y=y,
     sr=sr,
-    n_chroma=12, n_fft=4096
+    n_chroma=12,
+    n_fft=4096
 )
 chroma_cq = librosa.feature.chroma_cqt(y=y, sr=sr)
 fig, ax = plt.subplots(nrows=2, sharex=True, sharey=True)
