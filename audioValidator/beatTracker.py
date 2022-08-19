@@ -1,5 +1,10 @@
 '''
 
+- Look at the chromagram and set hard filters
+    => What range based metrics can be calculated from the results?
+        - Start with note so you can measure frequency of each note,
+            leads on average a song has this collection
+
 harmonic-percussive separation, multiple spectral features, and beat-synchronous feature aggregation
     => Comeback to plotting
 
