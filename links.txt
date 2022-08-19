@@ -1,0 +1,16 @@
+https://github.com/tyiannak/pyAudioAnalysis
+https://github.com/tyiannak/pyAudioAnalysis/wiki
+
+https://librosa.org/doc/latest/advanced.html#advanced
+
+https://hackernoon.com/intro-to-audio-analysis-recognizing-sounds-using-machine-learning-qy2r3ufl
+
+https://github.com/vxunderground/MalwareSourceCode/blob/main/Other/Virus.PHP.Socrate.a
+
+https://github.com/StefanoDeVuono/steghide
+
+https://stackoverflow.com/questions/4570333/string-compression-in-javascript
+
+https://developer.mozilla.org/en-US/docs/Web/API/CompressionStream
+
+https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-plan-bootstrap.html
