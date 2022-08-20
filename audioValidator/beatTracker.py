@@ -28,6 +28,7 @@ import librosa
 import librosa.display
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 
 
 # 1. Get the file path to an included audio example
@@ -155,6 +156,13 @@ plt.savefig('beat-features.png')
 
 
 ##########################################
+##########################################
+# 
+# Chromagrams
+# 
+##########################################
+##########################################
+
 
 # Plot chromagram
 chroma_stft = librosa.feature.chroma_stft(
@@ -171,5 +179,219 @@ ax[0].label_outer()
 img = librosa.display.specshow(chroma_cq, y_axis='chroma', x_axis='time', ax=ax[1])
 ax[1].set(title='chroma_cqt')
 fig.colorbar(img, ax=ax)
+
+
+
+#########################
+# 
+# Towards Summarizing
+# 
+#########################
+
+
+# Import modules
+import librosa
+import librosa.display
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# Config
+filename = librosa.example('nutcracker')
+y, sr = librosa.load(filename)
+audio_chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
+
+
+# Dimensions: 43 = 1s, 22 = 0.5
+y.shape
+audio_chroma.shape
+
+'''
+2mins of audio = 120s
+    => (5163 / 120) = 43
+    => (5163 / 43.025) = 120
+
+Out[4]: (12, 5163)
+
+Out[2]: (2643264,) @ 22050
+    => time = 2643264/22050 = 120s
+    
+
+( 2643264/22050 ) == 5163 / (5163 / ( 2643264/22050 ) )
+Out[42]: True
+
+
+len(mockSignal)
+70014 / 2000, 35
+    137 / 35 = 4 # 3.91
+
+'''
+
+
+# Work with slices
+results_mal =  [ [ ] for rows in range(chroma_mal.shape[0]) ]
+strt = 0
+end = 2
+step = 2
+chroma_mal.shape[1]
+while end < (chroma_mal.shape[1] + 1):
+    iters = 0
+    pitchCounter = 0
+    for pitch in chroma_mal:
+        pitchSlice = pitch[strt:end]
+        for elm in range(0, len(pitchSlice)):
+            if pitchSlice[elm] < 0.8:
+                pitchSlice[elm] = 0
+            else:
+                pitchSlice[elm] = 1
+        results_mal[pitchCounter].append( float(np.sum(pitchSlice)/len(pitchSlice)) )
+        pitchCounter+=1
+    pitchCounter = 0
+    iters+=1
+    strt = (end+1)
+    end = (end + step)
+
+
+# Convert to nummpy array
+results_mal = np.asarray(results_mal).astype('float32')
+for i in range(0, 12):
+    print(results_mal[i][2])
+
+
+# Can still create (handy while own is figured out)
+results_mal = np.asarray(results_mal).astype('float32')
+librosa.display.specshow(results_mal, y_axis='chroma', x_axis='time')
+
+
+
+######################################
+######################################
+# 
+# Summaries are interesting
+#  metal will obviously break it
+# Trying to reflect how busy it is
+# 
+######################################
+######################################
+
+
+playedSum_mal = 0
+nullSum_mal = 0
+notesPlayed_mal = []
+for i in range(0, results_mal.shape[1]):
+    rangeCount = 0
+    nullOthers = 0
+    for pitch in range(0, 12):
+        if results_mal[pitch][i] >= 0.5:
+            rangeCount+=1
+            playedSum_mal+=1
+        else:
+            nullOthers+=1
+            nullSum_mal+=1
+    data = tuple( ( rangeCount, nullOthers ) )
+    notesPlayed_mal.append(data)
+        
+
+
+playedSum = 0
+nullSum = 0
+notesPlayed = []
+for i in range(0, results.shape[1]):
+    rangeCount = 0
+    nullOthers = 0
+    for pitch in range(0, 12):
+        if results[pitch][i] >= 0.5:
+            rangeCount+=1
+            playedSum+=1
+        else:
+            nullOthers+=1
+            nullSum+=1
+    data = tuple( ( rangeCount, nullOthers ) )
+    notesPlayed.append(data)
+  
+
+
+# Summarize
+playedSum
+playedSum_mal
+nullSum
+nullSum_mal
+
+playedSum / len(notesPlayed)
+playedSum_mal / len(notesPlayed_mal)
+
+
+nullSum / len(notesPlayed)
+nullSum_mal / len(notesPlayed_mal)
+
+'''
+
+Played: 119 vs 249
+
+Null: 1245 vs 567
+
+Average Played: 0.975 vs 3.661
+
+Average Not Played: 11 vs 8
+
+Tempo comparision: 107 vs 234
+
+'''
+
+
+# Stored info
+song = {
+    "ID": "dance of sugar plum faeries",
+    "Mean Played/ half-s": playedSum / len(notesPlayed),
+    "Mean Not Played/ half-s": nullSum / len(notesPlayed),
+    "Played Sum": playedSum,
+    "Not Played Sum": nullSum,
+    "Played Size": len(notesPlayed),
+    "Length seconds": y.shape[0]/sr,
+    "Tempo": 107,
+    "Wave Size": y.shape[0],
+    "Sampling Rate": sr
+}
+malware = {
+    "ID": "goat malware",
+    "Mean Played/ half-s": playedSum_mal / len(notesPlayed_mal),
+    "Mean Not Played/ half-s": nullSum_mal / len(notesPlayed_mal),
+    "Played Sum": playedSum_mal,
+    "Not Played Sum": nullSum_mal,
+    "Played Size": len(notesPlayed_mal),
+    "Length seconds": 70014 / 2000,
+    "Tempo": 234,
+    "Wave Size": 70014,
+    "Sampling Rate": 2000
+}
+
+
+
+# Dump info
+jsonDump = [
+    song,
+    malware
+]
+print(json.dumps(jsonDump, indent = 2))
+
+
+
+
+
+######################################
+######################################
+# 
+# Read / Write Audio
+# 
+######################################
+######################################
+
+
+
+
+
+
+
+
 
 

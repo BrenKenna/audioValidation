@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 
 # Read data
-with open("goat-java.txt", "r") as f:
+with open("generator/goat-java.txt", "r") as f:
     data = f.readlines()
 f.close()
 
@@ -56,7 +56,7 @@ tempo, beat_frames = librosa.beat.beat_track(
 '''
 
 # Try chromagram
-chroma_stft = librosa.feature.chroma_stft(
+chroma_mal = librosa.feature.chroma_stft(
     y = np.asarray(mockSignal),
     sr = 2000,
     n_chroma=12,
@@ -64,3 +64,11 @@ chroma_stft = librosa.feature.chroma_stft(
 )
 img = librosa.display.specshow(chroma_stft, y_axis='chroma', x_axis='time')
 
+'''
+70014, @ 2000
+    => Duration = 70014/200 = 35 
+
+chroma_mal.shape
+Out[22]: (12, 137)
+
+'''
