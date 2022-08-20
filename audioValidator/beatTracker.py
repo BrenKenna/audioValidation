@@ -4,6 +4,13 @@
     => What range based metrics can be calculated from the results?
         - Start with note so you can measure frequency of each note,
             leads on average a song has this collection
+    => Summary objects look clearly separated, after separaing harmonic from percussion:
+        - Should wrap this up into classes
+        - Classifier should load the example set
+        - Expand with a couple of other examples once done
+        - See where 'Give-Me-the-Night.wav' places and another example
+            => Use an SVM, build from example then apply to unseen
+            => Read, analyze and fit is what spark will be doing
 
 harmonic-percussive separation, multiple spectral features, and beat-synchronous feature aggregation
     => Comeback to plotting
