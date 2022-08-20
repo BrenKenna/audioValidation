@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 
 # Read data
-with open("generator/goat-java.txt", "r") as f:
+with open("audioValidator/generator/goat-java.txt", "r") as f:
     data = f.readlines()
 f.close()
 

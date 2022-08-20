@@ -387,11 +387,129 @@ print(json.dumps(jsonDump, indent = 2))
 ######################################
 
 
+# Import from sound file
+import soundfile as sf
+
+
+# Write wav: sounds fine
+sf.write(
+    'nutcracker.wav',
+    y,
+    sr
+)
+
+# No sound
+sf.write(
+    'malware.wav',
+    np.asarray(mockSignal),
+    2000
+)
+
+
+# Read some disco
+y, sr = librosa.load('examples/Sir-Duke.wav', duration = 120)
+
+tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
+y_harmonic, y_percussive = librosa.effects.hpss(y)
+chromagram = librosa.feature.chroma_cqt(y=y_harmonic, sr=sr)
+librosa.display.specshow(chromagram, y_axis='chroma', x_axis='time')
+
+beat_chroma = librosa.util.sync(
+    chromagram,
+    beat_framesPerc,
+    aggregate=np.median
+)
+librosa.display.specshow(chromagram, y_axis='chroma', x_axis='time')
+
+plt.show()
 
 
 
+# Work with slices
+# y.shape[0] / sr = 120
+# 5168 / 120 = 43
+results_stomp =  [ [ ] for rows in range(chromagram.shape[0]) ]
+strt = 0
+end = 43
+step = 43
+chromagram.shape[1]
+while end < (chromagram.shape[1] + 1):
+    iters = 0
+    pitchCounter = 0
+    for pitch in chromagram:
+        pitchSlice = pitch[strt:end]
+        for elm in range(0, len(pitchSlice)):
+            if pitchSlice[elm] < 0.8:
+                pitchSlice[elm] = 0
+            else:
+                pitchSlice[elm] = 1
+        results_stomp[pitchCounter].append( float(np.sum(pitchSlice)/len(pitchSlice)) )
+        pitchCounter+=1
+    pitchCounter = 0
+    iters+=1
+    strt = (end+1)
+    end = (end + step)
+
+
+# Convert to nummpy array
+results_stomp = np.asarray(results_stomp).astype('float32')
+for i in range(0, 12):
+    print(results_stomp[i][2])
+
+
+# Can still create (handy while own is figured out)
+#results_mal = np.asarray(results_mal).astype('float32')
+librosa.display.specshow(results_stomp, y_axis='chroma', x_axis='time')
+
+playedSum_metal = 0
+nullSum_metal = 0
+notesPlayed_metal = []
+for i in range(0, results_stomp.shape[1]):
+    rangeCount = 0
+    nullOthers = 0
+    for pitch in range(0, 12):
+        if results_stomp[pitch][i] >= 0.5:
+            rangeCount+=1
+            playedSum_metal+=1
+        else:
+            nullOthers+=1
+            nullSum_metal+=1
+    data = tuple( ( rangeCount, nullOthers ) )
+    notesPlayed_metal.append(data)
+ 
+
+sir_du = {
+    "ID": "stomp",
+    "Mean Played/ half-s": playedSum_metal / len(notesPlayed_metal),
+    "Mean Not Played/ half-s": nullSum_metal / len(notesPlayed_metal),
+    "Played Sum": playedSum_metal,
+    "Not Played Sum": nullSum_metal,
+    "Played Size": len(notesPlayed_metal),
+    "Length seconds": y.shape[0] / sr,
+    "Tempo": tempo,
+    "Wave Size": y.shape[0],
+    "Sampling Rate": sr
+}
 
 
 
+# Dump info
+jsonDump = [
+    song,
+    stomp,
+    disco,
+    metal,
+    blackMetal,
+    malware
+]
+print(json.dumps(jsonDump, indent = 2))
+
+# Directly from dictionary
+with open('chromagram-summaries.json', 'w') as outfile:
+    json.dump(jsonDump, outfile)
 
 
+
+with open('chromagram-summaries.json') as json_file:
+    data = json.load(json_file)
+    print(data)
