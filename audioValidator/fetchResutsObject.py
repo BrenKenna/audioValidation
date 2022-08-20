@@ -29,6 +29,12 @@ sirDuke.setTempo()
 
 # Analyze above results
 sirDuke.initializeChromAna() # halfSec = False
+'''
+
+(0, 43, 43)
+
+'''
+
 sirDuke.analyzeChroma()
 
 
@@ -36,4 +42,32 @@ sirDuke.analyzeChroma()
 sirDuke.summarizePitchFreq()
 sirDuke.setResults()
 
-sirDuke.results
+'''
+
+(105, 1335)
+
+'''
+
+
+# Print results
+print(json.dumps([sirDuke.results], indent = 2))
+
+'''
+
+[
+  {
+    "Track": "Sir Duke",
+    "Track Name": "examples/Sir-Duke.wav",
+    "Mean Played/ half-s": 0.875,
+    "Mean Not Played/ half-s": 11.125,
+    "Played Sum": 105,
+    "Not Played Sum": 1335,
+    "Played Size": 120,
+    "Length seconds": 120,
+    "Tempo": 107.666015625,
+    "Wave Size": 2646000,
+    "Sampling Rate": 22050
+  }
+]
+
+'''

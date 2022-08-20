@@ -149,9 +149,11 @@ class AudioValResult():
 
 
     # Summarize pitch
+    #  Currently doubles itself, while averages are accurate
     def summarizePitchFreq(self):
         
         # Data for results
+        self.notesPlayed = []
         playedSum = 0
         nullSum = 0
         
@@ -183,21 +185,34 @@ class AudioValResult():
         return playedSum, nullSum
 
 
-    # Set results:   y.shape[0]/sr
+    # Set results
     def setResults(self):
         
         # Fetch summary
         playedSum, nullSum = self.summarizePitchFreq()
-        
+
+
+        #
         # Set reults object
+        # For whatever the output is twice the size as notes
+        #  values for sum etc are correct
+        #  adjusting those by this yeilds same results.
+        #
+        # Shape of expected "self.chromProbs" is correct for
+        #  the "Sir-Duke.wav" track @120 and indent look good. 
+        #       But the resulting length is 240?
+        #
+        # Moving on with life, but will comeback periodically
+        #  because priorities are now Generator class & AWS stuff
+        # 
         self.results = {
             "Track": self.trackName,
             "Track Name": self.trackPath,
-            "Mean Played/ half-s": playedSum / len(self.notesPlayed),
-            "Mean Not Played/ half-s": nullSum / len(self.notesPlayed),
+            "Mean Played/ half-s": playedSum / int(len(self.notesPlayed)/2),
+            "Mean Not Played/ half-s": nullSum / int(len(self.notesPlayed)/2),
             "Played Sum": playedSum,
             "Not Played Sum": nullSum,
-            "Played Size": len(self.notesPlayed),
+            "Played Size": int(len(self.notesPlayed)/2),
             "Length seconds": int(self.audio["trackLength"]),
             "Tempo": self.tempo,
             "Wave Size": self.audio["wave"].shape[0],
