@@ -6,9 +6,11 @@ Created on Sat Aug 20 17:55:31 2022
 """
 
 # Import required modules
+import os
 import librosa
 import librosa.display
 import numpy as np
+import pandas as pd
 import json
 import matplotlib.pyplot as plt
 
@@ -21,11 +23,13 @@ class AudioValResult():
     """
     
     # Initialize
-    def __init__(self, trackName, trackPath):
+    def __init__(self, trackName, trackPath, label = None):
         
         # Identifiying attributes
         self.trackName = trackName
         self.trackPath = trackPath
+        self.label = label
+        self.fileSize = self.getFileStats()
         
         # Core audio
         self.audio = { }
@@ -40,6 +44,11 @@ class AudioValResult():
         self.chromaProbs = None
         self.notesPlayed = []
         self.results = { }
+
+
+    # Get file stats
+    def getFileStats(self):
+        return os.stat(self.trackPath).st_size / (1024 * 1024)
 
 
     # Load track
@@ -216,5 +225,36 @@ class AudioValResult():
             "Length seconds": int(self.audio["trackLength"]),
             "Tempo": self.tempo,
             "Wave Size": self.audio["wave"].shape[0],
-            "Sampling Rate": self.audio["sampleRate"]
+            "Sampling Rate": self.audio["sampleRate"],
+            "File Size MB": self.fileSize,
+            "MB / s": self.fileSize / int(self.audio["trackLength"])
         }
+        if self.label != None:
+            self.results.update({
+                "Label": self.label
+            })
+        if self.tempo != 0:
+            notesOvrTemp = playedSum / self.tempo
+        else:
+            notesOvrTemp = 0
+        self.results.update({
+            "Notes / Tempo": notesOvrTemp
+        })
+
+
+    # Return results as row for comparator
+    def getResultsAsRow(self):
+        return pd.DataFrame.from_dict(self.results, orient='index').transpose()
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

@@ -107,13 +107,13 @@ print(json.dumps([sirDuke.results], indent = 2))
 from generator import generator
 
 # Generate audio signal
-goatMal = generator.AudioValGenerator('Collection', 'generator/collection-java.txt')
+goatMal = generator.AudioValGenerator('Half-Compendium', 'generator/half-compendium.txt')
 goatMal.generateSignal()
 goatMal.audioSignal.shape
 goatMal.sampleRate
 
 # Export to wav: (1102262, 11022)
-goatMal.exportWav('generator/collection-java.wav')
+goatMal.exportWav('generator/half-compendium.wav')
 
 
 # Read and analyze
@@ -192,21 +192,23 @@ from results import results
 # Setup analysis
 output = [ ]
 toDo = [
-   ('Goat', 'generator/goat-java.wav'),
-   ('Collection', 'generator/collection-java.wav'),
-   ('Wihing Well', 'examples/Wishing-Well.wav'),
-   ('Stomp', 'examples/Stomp.wav'),
-   ('Beat Goes on', 'examples/And-the-Beat-Goes-On.wav'),
-   ('Sir Duke', 'examples/Sir-Duke.wav'),
-   ('Wihing Well', 'examples/Wishing-Well.wav'),
-   ('Give Me the Night', 'examples/Give-Me-The-Night.wav'),
-   ('Thorns of Crimson Death', 'examples/Thorns-of-Crimson-Death.wav')
+   ('Goat', 'generator/goat-java.wav', 1),
+   ('Collection', 'generator/collection-java.wav', 1),
+   ('Half-Compendium', 'generator/half-compendium.wav', 1),
+   ('Compendium', 'generator/compendium.wav', 1),
+   ('Wihing Well', 'examples/Wishing-Well.wav', 0),
+   ('Stomp', 'examples/Stomp.wav', 0),
+   ('Beat Goes on', 'examples/And-the-Beat-Goes-On.wav', 0),
+   ('Sir Duke', 'examples/Sir-Duke.wav', 0),
+   ('Wihing Well', 'examples/Wishing-Well.wav', 0),
+   ('Give Me the Night', 'examples/Give-Me-The-Night.wav', 0),
+   ('Thorns of Crimson Death', 'examples/Thorns-of-Crimson-Death.wav', 0)
 ]
 
 
 # Run
 for track in toDo:
-    trackAna = results.AudioValResult(track[0], track[1])
+    trackAna = results.AudioValResult(track[0], track[1], track[2])
     trackAna.percusHarmonSep()
     trackAna.generateChromagram()
     trackAna.setTempo()
@@ -216,6 +218,13 @@ for track in toDo:
     trackAna.setResults()
     output.append(trackAna.results)
     del trackAna
+
+
+# Pretty print results
+print(json.dumps(
+    output,
+    indent = 2
+))
 
 
 # Dump
@@ -248,5 +257,123 @@ with open('summaries.json', 'w') as outfile:
 (142, 1298)
 
 '''
+
+
+#####################################
+#####################################
+# 
+# Building Comparator
+# 
+# 1. Build model from training
+# 2. Build result from new example
+# 3. Fetch as pd row
+# 4. Fit model to this row
+# 
+#####################################
+#####################################
+
+
+# Import required modules
+import os, sys
+import librosa
+import librosa.display
+import numpy as np
+import json
+import matplotlib.pyplot as plt
+
+
+# Pandas & SVM
+import pandas as pd
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+
+# Audio validator
+from results import results
+from generator import generator
+
+
+# Read & train model
+training = "summaries.json"
+data = pd.io.json.read_json(training)
+
+
+
+# Configure for training; df.to_numpy()
+svm = SVC()
+labels = data.Label
+train = data.drop(
+    [
+      "Label",
+      "Track",
+      "Track Name",
+      "Length seconds",
+      "Wave Size",
+      "Sampling Rate",
+      "Played Size",
+      "Not Played Sum"
+    ],
+    axis=1
+) # Search col space, 0 = row
+
+svm.fit(train, labels)
+
+
+
+# Predict self
+data['Prediction'] = svm.predict(train).tolist()
+data["Pred State"] = data["Label"] == data["Prediction"]
+data[ [ "Track", "Label", "Prediction", "Pred State" ] ] 
+
+
+'''
+
+- Tempo plus metrics not enough to salvage the extreme and unlikely case
+
+                     Track  Label  Prediction  Pred State
+0                     Goat      1           1        True
+1               Collection      1           0       False
+2              Wihing Well      0           0        True
+3                    Stomp      0           0        True
+4             Beat Goes on      0           0        True
+5                 Sir Duke      0           0        True
+6              Wihing Well      0           0        True
+7        Give Me the Night      0           0        True
+8  Thorns of Crimson Death      0           0        True
+
+
+
+- Better performance with below columns
+
+
+Index(['Mean Played/s', 'Mean Not Played/s', 'Played Sum', 'Tempo',
+       'File Size MB', 'MB / s', 'Notes / Tempo'],
+      dtype='object')
+
+
+                      Track  Label  Prediction  Pred State
+0                      Goat      1           1        True
+1                Collection      1           1        True
+2           Half-Compendium      1           1        True
+3                Compendium      1           1        True
+4               Wihing Well      0           0        True
+5                     Stomp      0           0        True
+6              Beat Goes on      0           0        True
+7                  Sir Duke      0           0        True
+8               Wihing Well      0           0        True
+9         Give Me the Night      0           0        True
+10  Thorns of Crimson Death      0           0        True
+
+
+'''
+
+
+
+
+
+
+
+
+
 
 
