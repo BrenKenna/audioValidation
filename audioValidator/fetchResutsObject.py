@@ -65,8 +65,8 @@ print(json.dumps([sirDuke.results], indent = 2))
   {
     "Track": "Sir Duke",
     "Track Name": "examples/Sir-Duke.wav",
-    "Mean Played/ half-s": 0.875,
-    "Mean Not Played/ half-s": 11.125,
+    "Mean Played/s": 0.875,
+    "Mean Not Played/s": 11.125,
     "Played Sum": 105,
     "Not Played Sum": 1335,
     "Played Size": 120,
@@ -75,24 +75,12 @@ print(json.dumps([sirDuke.results], indent = 2))
     "Wave Size": 2646000,
     "Sampling Rate": 22050
   },
-  {
-    "Track": "And the Beat Goes on",
-    "Track Name": "examples/And-the-Beat-Goes-On.wav",
-    "Mean Played/ half-s": 0.925,
-    "Mean Not Played/ half-s": 11.075,
-    "Played Sum": 111,
-    "Not Played Sum": 1329,
-    "Played Size": 120,
-    "Length seconds": 120,
-    "Tempo": 112.34714673913044,
-    "Wave Size": 2646000,
-    "Sampling Rate": 22050
-  },
+
   {
     "Track": "Thorns Crim. Death",
     "Track Name": "examples/Thorns-of-Crimson-Death.wav",
-    "Mean Played/ half-s": 1.1833333333333333,
-    "Mean Not Played/ half-s": 10.816666666666666,
+    "Mean Played/s": 1.1833333333333333,
+    "Mean Not Played/s": 10.816666666666666,
     "Played Sum": 142,
     "Not Played Sum": 1298,
     "Played Size": 120,
@@ -148,12 +136,14 @@ print(json.dumps([goatAna.results], indent = 2))
 
 '''
 
+- Collection only doable with >7M lines of code
+
 [
   {
     "Track": "Goat",
     "Track Name": "generator/goat-java.wav",
-    "Mean Played/ half-s": 3.2,
-    "Mean Not Played/ half-s": 8.8,
+    "Mean Played/s": 3.2,
+    "Mean Not Played/s": 8.8,
     "Played Sum": 112,
     "Not Played Sum": 308,
     "Played Size": 35,
@@ -166,8 +156,8 @@ print(json.dumps([goatAna.results], indent = 2))
   {
     "Track": "Collection",
     "Track Name": "generator/collection-java.wav",
-    "Mean Played/ half-s": 1.32,
-    "Mean Not Played/ half-s": 10.68,
+    "Mean Played/s": 1.32,
+    "Mean Not Played/s": 10.68,
     "Played Sum": 132,
     "Not Played Sum": 1068,
     "Played Size": 100,
@@ -179,3 +169,84 @@ print(json.dumps([goatAna.results], indent = 2))
 ]
 
 '''
+
+
+#######################
+# 
+# Build Collection
+# 
+#######################
+
+
+# Import required modules
+import os, sys
+import librosa
+import librosa.display
+import numpy as np
+import json
+import matplotlib.pyplot as plt
+
+from results import results
+
+
+# Setup analysis
+output = [ ]
+toDo = [
+   ('Goat', 'generator/goat-java.wav'),
+   ('Collection', 'generator/collection-java.wav'),
+   ('Wihing Well', 'examples/Wishing-Well.wav'),
+   ('Stomp', 'examples/Stomp.wav'),
+   ('Beat Goes on', 'examples/And-the-Beat-Goes-On.wav'),
+   ('Sir Duke', 'examples/Sir-Duke.wav'),
+   ('Wihing Well', 'examples/Wishing-Well.wav'),
+   ('Give Me the Night', 'examples/Give-Me-The-Night.wav'),
+   ('Thorns of Crimson Death', 'examples/Thorns-of-Crimson-Death.wav')
+]
+
+
+# Run
+for track in toDo:
+    trackAna = results.AudioValResult(track[0], track[1])
+    trackAna.percusHarmonSep()
+    trackAna.generateChromagram()
+    trackAna.setTempo()
+    trackAna.initializeChromAna() # halfSec = False
+    trackAna.analyzeChroma()
+    trackAna.summarizePitchFreq()
+    trackAna.setResults()
+    output.append(trackAna.results)
+    del trackAna
+
+
+# Dump
+with open('summaries.json', 'w') as outfile:
+    json.dump(output, outfile)
+
+
+'''
+
+- Sums are still quite different
+
+(0, 43, 43)
+(112, 308)
+(0, 43, 43)
+(132, 1068)
+
+(0, 43, 43)
+(132, 1308)
+(0, 43, 43)
+(125, 1315)
+(0, 43, 43)
+(111, 1329)
+(0, 43, 43)
+(105, 1335)
+(0, 43, 43)
+(132, 1308)
+(0, 43, 43)
+(113, 1327)
+(0, 43, 43)
+(142, 1298)
+
+'''
+
+

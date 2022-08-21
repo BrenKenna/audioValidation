@@ -208,8 +208,8 @@ class AudioValResult():
         self.results = {
             "Track": self.trackName,
             "Track Name": self.trackPath,
-            "Mean Played/ half-s": playedSum / int(len(self.notesPlayed)),
-            "Mean Not Played/ half-s": nullSum / int(len(self.notesPlayed)),
+            "Mean Played/s": playedSum / int(len(self.notesPlayed)),
+            "Mean Not Played/s": nullSum / int(len(self.notesPlayed)),
             "Played Sum": playedSum,
             "Not Played Sum": nullSum,
             "Played Size": int(len(self.notesPlayed)),
