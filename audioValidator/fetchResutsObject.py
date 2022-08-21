@@ -369,11 +369,78 @@ Index(['Mean Played/s', 'Mean Not Played/s', 'Played Sum', 'Tempo',
 
 
 
+###################
+###################
+# 
+# Tying Together
+# 
+###################
+###################
 
 
 
+# Import required modules
+import os, sys
+import librosa
+import librosa.display
+import numpy as np
+import json
+import matplotlib.pyplot as plt
+import pandas as pd
+
+from results import results
 
 
+# Setup analysis
+output = [ ]
+toDo = [
+   ('Fell So Numb', 'examples/test/Feel-So-Numb.wav'),
+   ('Death - God of Thunder', 'examples/test/God-of-Thunder.wav'),
+   ('Melechesh-1', 'examples/test/Grand-Gathas-of-Baal-Sin.wav'),
+   ('Superbeast', 'examples/test/Superbeast.wav'),
+   ('Melechesh-2', 'examples/test/Tempest-Temper-Enlil-Enraged.wav')
+]
 
 
+# Run
+for track in toDo:
+    trackAna = results.AudioValResult(track[0], track[1])
+    trackAna.percusHarmonSep()
+    trackAna.generateChromagram()
+    trackAna.setTempo()
+    trackAna.initializeChromAna() # halfSec = False
+    trackAna.analyzeChroma()
+    trackAna.summarizePitchFreq()
+    trackAna.setResults()
+    output.append(trackAna.getResultsAsRow())
+    del trackAna
 
+
+# 
+colsDrop = [
+    "Track",
+    "Track Name",
+    "Length seconds",
+    "Wave Size",
+    "Sampling Rate",
+    "Played Size",
+    "Not Played Sum"
+]
+
+for testCase in output:
+    test = testCase.drop( colsDrop, axis = 1)
+    print(testCase["Track"][0] + " = " + str(svm.predict(test)[0]))
+
+
+'''
+
+- Death, Skank & Black metal tests worked out ok
+
+Fell So Numb = 0
+Death - God of Thunder = 0
+Melechesh-1 = 0
+Superbeast = 0
+Melechesh-2 = 0
+Melechesh-2 = 0
+
+'''
