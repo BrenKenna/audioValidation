@@ -25,7 +25,7 @@ from results import results
 
 
 # Load track
-sirDuke = results.AudioValResult('Sir Duke', 'examples/Sir-Duke.wav')
+sirDuke = results.AudioValResult('Thorns Crim. Death', 'examples/Thorns-of-Crimson-Death.wav')
 
 
 # Librosa analysis
@@ -74,6 +74,32 @@ print(json.dumps([sirDuke.results], indent = 2))
     "Tempo": 107.666015625,
     "Wave Size": 2646000,
     "Sampling Rate": 22050
+  },
+  {
+    "Track": "And the Beat Goes on",
+    "Track Name": "examples/And-the-Beat-Goes-On.wav",
+    "Mean Played/ half-s": 0.925,
+    "Mean Not Played/ half-s": 11.075,
+    "Played Sum": 111,
+    "Not Played Sum": 1329,
+    "Played Size": 120,
+    "Length seconds": 120,
+    "Tempo": 112.34714673913044,
+    "Wave Size": 2646000,
+    "Sampling Rate": 22050
+  },
+  {
+    "Track": "Thorns Crim. Death",
+    "Track Name": "examples/Thorns-of-Crimson-Death.wav",
+    "Mean Played/ half-s": 1.1833333333333333,
+    "Mean Not Played/ half-s": 10.816666666666666,
+    "Played Sum": 142,
+    "Not Played Sum": 1298,
+    "Played Size": 120,
+    "Length seconds": 120,
+    "Tempo": 143.5546875,
+    "Wave Size": 2646000,
+    "Sampling Rate": 22050
   }
 ]
 
@@ -84,6 +110,7 @@ print(json.dumps([sirDuke.results], indent = 2))
 #################################
 # 
 # Track generating
+#  10 '_'
 # 
 #################################
 
@@ -92,12 +119,13 @@ print(json.dumps([sirDuke.results], indent = 2))
 from generator import generator
 
 # Generate audio signal
-goatMal = generator.AudioValGenerator('Goat', 'generator/goat-java.txt')
+goatMal = generator.AudioValGenerator('Collection', 'generator/collection-java.txt')
 goatMal.generateSignal()
+goatMal.audioSignal.shape
+goatMal.sampleRate
 
-
-# Export to wav
-goatMal.exportWav('generator/goat-java.wav')
+# Export to wav: (1102262, 11022)
+goatMal.exportWav('generator/collection-java.wav')
 
 
 # Read and analyze
@@ -124,14 +152,28 @@ print(json.dumps([goatAna.results], indent = 2))
   {
     "Track": "Goat",
     "Track Name": "generator/goat-java.wav",
-    "Mean Played/ half-s": 6.588235294117647,
-    "Mean Not Played/ half-s": 18.11764705882353,
+    "Mean Played/ half-s": 3.2,
+    "Mean Not Played/ half-s": 8.8,
     "Played Sum": 112,
     "Not Played Sum": 308,
-    "Played Size": 17,
+    "Played Size": 35,
     "Length seconds": 35,
     "Tempo": 0,
     "Wave Size": 771905,
+    "Sampling Rate": 22050
+  },
+  
+  {
+    "Track": "Collection",
+    "Track Name": "generator/collection-java.wav",
+    "Mean Played/ half-s": 1.32,
+    "Mean Not Played/ half-s": 10.68,
+    "Played Sum": 132,
+    "Not Played Sum": 1068,
+    "Played Size": 100,
+    "Length seconds": 100,
+    "Tempo": 0,
+    "Wave Size": 2205001,
     "Sampling Rate": 22050
   }
 ]
