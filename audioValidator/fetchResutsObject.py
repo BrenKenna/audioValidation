@@ -378,7 +378,6 @@ Index(['Mean Played/s', 'Mean Not Played/s', 'Played Sum', 'Tempo',
 ###################
 
 
-
 # Import required modules
 import os, sys
 import librosa
@@ -444,3 +443,81 @@ Melechesh-2 = 0
 Melechesh-2 = 0
 
 '''
+
+
+
+###################################
+###################################
+# 
+# Scope out comparator
+# 
+###################################
+###################################
+
+
+
+# Import required modules
+import os, sys
+import librosa
+import librosa.display
+import numpy as np
+import json
+import matplotlib.pyplot as plt
+import pandas as pd
+
+
+# Audio validator shtuff
+from generator import generator
+from results import results
+from comparator import comparator
+
+
+# Instantiate & load model
+audioVal = comparator.AudioValComparator()
+audioVal.loadTrainingSet()
+audioVal.setState()
+audioVal.getState()
+
+
+'''
+
+                      Track  Label  Prediction  Pred State
+0                      Goat      1           1        True
+1                Collection      1           1        True
+2           Half-Compendium      1           1        True
+3                Compendium      1           1        True
+4               Wihing Well      0           0        True
+5                     Stomp      0           0        True
+6              Beat Goes on      0           0        True
+7                  Sir Duke      0           0        True
+8               Wihing Well      0           0        True
+9         Give Me the Night      0           0        True
+10  Thorns of Crimson Death      0           0        True
+
+'''
+
+
+# Trial a track
+track = ('Melechesh-2', 'examples/test/Tempest-Temper-Enlil-Enraged.wav')
+trackAna = results.AudioValResult(track[0], track[1])
+trackAna.percusHarmonSep()
+trackAna.generateChromagram()
+trackAna.setTempo()
+trackAna.initializeChromAna() # halfSec = False
+trackAna.analyzeChroma()
+trackAna.summarizePitchFreq()
+trackAna.setResults()
+
+
+# For testing all methods
+outputA = trackAna.getResultsAsRow()
+outputA = audioVal.mapResults(trackAna.results)
+outputB = trackAna.getResultsAsRow(filter = True)
+
+
+# Classify
+audioVal.compareRow(outputA)
+audioVal.compareRow(outputB, assignToDF = True)
+
+
+

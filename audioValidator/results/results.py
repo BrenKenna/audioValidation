@@ -243,18 +243,23 @@ class AudioValResult():
 
 
     # Return results as row for comparator
-    def getResultsAsRow(self):
-        return pd.DataFrame.from_dict(self.results, orient='index').transpose()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    def getResultsAsRow(self, filter = False):
+        
+        # Format
+        output = pd.DataFrame.from_dict(self.results, orient='index').transpose()
+        
+        # Handle classification filter
+        if filter:
+            colsDrop = [
+                "Track",
+                "Track Name",
+                "Length seconds",
+                "Wave Size",
+                "Sampling Rate",
+                "Played Size",
+                "Not Played Sum"
+            ]
+            output = output.drop(colsDrop, axis = 1)
+            
+        # Return self as a pandas dataframe row
+        return output
