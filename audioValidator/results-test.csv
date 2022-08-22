@@ -1,0 +1,7 @@
+Track,Track Name,Mean Played/s,Mean Not Played/s,Played Sum,Not Played Sum,Played Size,Length seconds,Tempo,Wave Size,Sampling Rate,File Size MB,MB / s,Notes / Tempo,Label
+Backdoor1-Python,resultsDir/Backdoor1-Python-mock-signal.wav,1.0,11.0,2,22,2,2,0,62711,22050,0.010890960693359375,0.0054454803466796875,0,1
+Backdoor2-Python,resultsDir/Backdoor2-Python-mock-signal.wav,3.0,9.0,3,9,1,1,0,24410,22050,0.00426483154296875,0.00426483154296875,0,1
+Goat-Java,resultsDir/Goat-Java-mock-signal.wav,3.2,8.8,112,308,35,35,0,771905,22050,0.13358306884765625,0.003816659109933036,0,1
+Hawk-Java,resultsDir/Hawk-Java-mock-signal.wav,3.0,9.0,3,9,1,1,0,33946,22050,0.0059146881103515625,0.0059146881103515625,0,1
+Trojan-Linux,resultsDir/Trojan-Linux-mock-signal.wav,4.0,8.0,4,8,1,1,0,23351,22050,0.00408172607421875,0.00408172607421875,0,1
+Vera-Python,resultsDir/Vera-Python-mock-signal.wav,3.269230769230769,8.73076923076923,85,227,26,26,0,593851,22050,0.10277938842773438,0.0039530534010667065,0,1
