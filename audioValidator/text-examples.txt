@@ -1,0 +1,4 @@
+https://raw.githubusercontent.com/vxunderground/MalwareSourceCode/main/Linux/Trojans/Trojan.Linux.TrojoDaemon.c,Trojan-Linux
+https://raw.githubusercontent.com/vxunderground/MalwareSourceCode/main/Java/Virus.Java.Cheshire.a/src/main/java/SelfExamine.java,Goat-Java
+https://raw.githubusercontent.com/vxunderground/MalwareSourceCode/main/Python/Backdoor.Python.Xenotix.a,Backdoor1-Python
+https://raw.githubusercontent.com/vxunderground/MalwareSourceCode/main/Python/Backdoor.Python.d00r.a,Backdoor2-Python

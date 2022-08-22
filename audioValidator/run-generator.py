@@ -49,6 +49,13 @@ else:
 	sys.stdout.write('\n\nProceeding with ' + mockData + '\n')
 
 
+# Handle optional args
+if args.output != None:
+    output = args.output
+    name = str(output + "/" + name)
+    sys.stdout.write('\n\nOptional output detected. Writing results to "' + name + '"')
+
+
 # Verify file exists
 # !os.path.exists(signal) -> giving error?
 if os.path.exists(mockData) == False:

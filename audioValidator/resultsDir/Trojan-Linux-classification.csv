@@ -1,0 +1,2 @@
+,Track,Track Name,Mean Played/s,Mean Not Played/s,Played Sum,Not Played Sum,Played Size,Length seconds,Tempo,Wave Size,Sampling Rate,File Size MB,MB / s,Notes / Tempo,Label
+0,Trojan-Linux,resultsDir/Trojan-Linux-mock-signal.wav,4.0,8.0,4,8,1,1,0,23351,22050,0.00408172607421875,0.00408172607421875,0,1

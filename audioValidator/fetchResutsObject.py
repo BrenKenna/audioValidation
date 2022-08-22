@@ -513,25 +513,3 @@ trackAna.setResults()
 outputA = trackAna.getResultsAsRow()
 outputB = trackAna.getResultsAsRow(filter = True)
 audioVal.compareRow(outputB, assignToDF = True)
-
-
-
-################################
-################################
-# 
-# Test scripts
-# 
-################################
-################################
-
-
-# Generate audio signal
-python run-generator.py -m "generator\goat-java.txt" -n "Goat Java"
-
-
-# Generate results
-python run-results-maker.py -s "examples\test\Tempest-Temper-Enlil-Enraged.wav" -n "Melechesh"
-
-
-# Generate classification
-python run-comparator.py -s "examples\test\Tempest-Temper-Enlil-Enraged.wav" -n "Melechesh"

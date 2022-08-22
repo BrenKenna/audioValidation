@@ -29,6 +29,7 @@ parser = argparse.ArgumentParser(description = "Use summary statistics from audi
 # Arguments
 parser.add_argument("-s", "--signal", action = 'store', type = str, help = "Input WAV signal\n")
 parser.add_argument("-n", "--name", action = 'store', type = str, help = "Identifier for signal\n")
+parser.add_argument("-o", "--outpath", action = 'store', type = str, help = "Output prefix for results\n")
 args = parser.parse_args()
 
 
@@ -46,6 +47,14 @@ else:
 	signal = args.signal
 	name = args.name
 	sys.stdout.write('\n\nProceeding with ' + signal + '\n')
+
+
+# Handle optional args
+if args.outpath != None:
+    outpath = str(args.outpath + "/" + name)
+    sys.stdout.write('\n\nOptional output detected. Writing results to "' + outpath + '"')
+else:
+    output = None
 
 
 # Verify file exists
@@ -117,17 +126,21 @@ audioVal.compareRow(output, assignToDF = True)
 
 
 # Handle results
-sys.stdout.write('\n\nHandling results')
+sys.stdout.write('\n\nHandling results\n')
 print(str(name) + " label = " + str(output["Label"][0]) )
 
 
-# Export to csv
-outCSV = str(name + "-classification.csv")
+# Handle output paths
+if outpath == None:
+    outCSV = str(name + "-classification.csv")
+    outJson = str(name + "-classification.json")
+else:
+    outCSV = str(outpath + "-classification.csv")
+    outJson = str(outpath + "-classification.json")
+
+
+# Export CSV & JSON
 output.to_csv(outCSV)
-
-
-# Write to JSON
-outJson = str(name + "-classification.json")
 with open(outJson, 'w') as outfile:
     json.dump(output.to_json(orient = 'index'), outfile)
 outfile.close()
