@@ -481,6 +481,7 @@ audioVal.getState()
 
 '''
 
+
                       Track  Label  Prediction  Pred State
 0                      Goat      1           1        True
 1                Collection      1           1        True
@@ -494,6 +495,7 @@ audioVal.getState()
 9         Give Me the Night      0           0        True
 10  Thorns of Crimson Death      0           0        True
 
+
 '''
 
 
@@ -503,21 +505,33 @@ trackAna = results.AudioValResult(track[0], track[1])
 trackAna.percusHarmonSep()
 trackAna.generateChromagram()
 trackAna.setTempo()
-trackAna.initializeChromAna() # halfSec = False
 trackAna.analyzeChroma()
-trackAna.summarizePitchFreq()
 trackAna.setResults()
 
 
 # For testing all methods
 outputA = trackAna.getResultsAsRow()
-outputA = audioVal.mapResults(trackAna.results)
 outputB = trackAna.getResultsAsRow(filter = True)
-
-
-# Classify
-audioVal.compareRow(outputA)
 audioVal.compareRow(outputB, assignToDF = True)
 
 
 
+################################
+################################
+# 
+# Test scripts
+# 
+################################
+################################
+
+
+# Generate audio signal
+python run-generator.py -m "generator\goat-java.txt" -n "Goat Java"
+
+
+# Generate results
+python run-results-maker.py -s "examples\test\Tempest-Temper-Enlil-Enraged.wav" -n "Melechesh"
+
+
+# Generate classification
+python run-comparator.py -s "examples\test\Tempest-Temper-Enlil-Enraged.wav" -n "Melechesh"

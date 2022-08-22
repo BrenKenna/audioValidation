@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.svm import SVC
 
-
 # 
 # Class to handle classification
 #   => Could maybe offer a little more simple things?
@@ -30,7 +29,7 @@ class AudioValComparator():
     def __init__(self):
         
         # Attributes for training
-        self.training = "summaries.json"
+        self.training = "comparator/summaries.json"
         self.data = None
         self.train = None
         self.labels = None
@@ -51,11 +50,12 @@ class AudioValComparator():
         # Training cols
         self.trainingCols = [
             "Mean Played/s",
-            "Mean Not Played/s"
+            "Mean Not Played/s",
             "Played Sum",
             "Tempo",
             "File Size MB",
-            "MB / s"
+            "MB / s",
+            "Notes / Tempo"
         ]
         
         # Attribute to hold its work?
@@ -90,16 +90,16 @@ class AudioValComparator():
         
         # Check cols first
         output = None
+        anaRow = row[ self.trainingCols ]
         # if set(self.trainingCols).issubset(row.columns):
         if 0 == 0:
-            output = self.svm.predict(row)[0]
+            output = self.svm.predict(anaRow)[0]
         
         # Otherwise pass
         #  should really raise an exception (3rd time now for whole program)
         else:
             output = "INVALID INPUT DATA"
-    
-    
+
         # Return results
         if assignToDF:
             row["Label"] = output
