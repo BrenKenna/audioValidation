@@ -1,0 +1,2 @@
+,Track,Track Name,Mean Played/s,Mean Not Played/s,Played Sum,Not Played Sum,Played Size,Length seconds,Tempo,Wave Size,Sampling Rate,File Size MB,MB / s,Notes / Tempo,Label
+0,Vera-Python,resultsDir/Vera-Python-mock-signal.wav,3.269230769230769,8.73076923076923,85,227,26,26,0,593851,22050,0.10277938842773438,0.0039530534010667065,0,1
