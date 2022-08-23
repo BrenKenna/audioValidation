@@ -513,3 +513,74 @@ trackAna.setResults()
 outputA = trackAna.getResultsAsRow()
 outputB = trackAna.getResultsAsRow(filter = True)
 audioVal.compareRow(outputB, assignToDF = True)
+
+
+
+#####################################
+#####################################
+# 
+# Utilities Package
+#
+#
+# References:
+#  https://www.learnpython.org/en/Map%2C_Filter%2C_Reduce
+#  https://www.analyticsvidhya.com/blog/2021/07/python-most-powerful-functions-map-filter-and-reduce-in-5-minutes/
+# 
+# 
+#####################################
+#####################################
+
+
+# Import required modules
+import os, sys, argparse
+import json
+import matplotlib.pyplot as plt
+import pandas as pd
+
+
+# Audio validator modules
+from generator import generator
+from results import results
+from comparator import comparator
+from utils import utils
+
+
+# Setup analysis
+output = [ ]
+toDo = [
+   ('Wihing Well', 'examples/Wishing-Well.wav'),
+   ('Stomp', 'examples/Stomp.wav'),
+   ('Beat Goes on', 'examples/And-the-Beat-Goes-On.wav'),
+   ('Thorns of Crimson Death', 'examples/Thorns-of-Crimson-Death.wav')
+]
+
+
+# Run
+for track in toDo:
+    output.append(utils.classifyAudioSignal(track[0], track[1]))
+
+
+##########################
+#
+# Try map, filter and reduce methods
+#
+# map(func, *iterables)
+# 
+##########################
+
+
+# Initialize
+outMap = [ ]
+toDo = [
+   ('Wihing Well', 'examples/Wishing-Well.wav'),
+   ('Stomp', 'examples/Stomp.wav'),
+   ('Beat Goes on', 'examples/And-the-Beat-Goes-On.wav'),
+   ('Thorns of Crimson Death', 'examples/Thorns-of-Crimson-Death.wav')
+]
+
+
+# Run
+outMap = list(map( utils.classifyAudioSignal_fromTuple, toDo ))
+
+
+

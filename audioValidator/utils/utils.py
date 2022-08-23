@@ -99,7 +99,7 @@ def writeClassification(dataframe, outprefix = None, outType = True):
 
 
 # Classifiy audio signal
-def classifyAudioSignal(track, signal):
+def classifyAudioSignal(track, signal, outDict = True):
     
     # Analyze track
     trackAna = analyzeAudio(track, signal)
@@ -110,9 +110,28 @@ def classifyAudioSignal(track, signal):
     output = trackAna.getResultsAsRow()
     audioVal.compareRow(output, assignToDF = True)
     
-    # Return results
-    return output
+    # Return results as dict
+    if outDict:
+        return json.loads(output.to_json(orient = 'index'))['0']
 
+    # Otherwise json string
+    else:
+        return output.to_json(orient = 'index')
+
+
+# Classify from tuple
+def classifyAudioSignal_fromTuple(item):
+    
+    # Handle optional arg
+    if len(item) > 3:
+        print("Error, malformed input")
+        return -1
+    
+    elif len(item) == 3:
+        return classifyAudioSignal(item[0], item[1], outDict = item[2])
+    
+    else:
+        return classifyAudioSignal(item[0], item[1]) 
 
 
 # Generate and classify signal
@@ -126,3 +145,15 @@ def classifyMockSignal(name, mockData):
     
     # Return results
     return output
+
+
+# Classify from tuple
+def classifyMockSignal_fromTuple(item):
+    
+    # Handle optional arg
+    if len(item) > 2:
+        print("Error, malformed input")
+        return -1
+
+    else:
+        return classifyMockSignal(item[0], item[1]) 
