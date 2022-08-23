@@ -36,7 +36,7 @@ args = parser.parse_args()
 if args.signal == None or args.name == None:
 
 	# Exit if no table is provided
-	sys.stdout.write('\n\nExiting, key variables not provided. Required arguments are input audio signal as WAV and an indentifier for this signal')
+	print('\n\nExiting, key variables not provided. Required arguments are input audio signal as WAV and an indentifier for this signal')
 	parser.print_help()
 	sys.exit()
 
@@ -45,13 +45,13 @@ if args.signal == None or args.name == None:
 else:
 	signal = args.signal
 	name = args.name
-	sys.stdout.write('\n\nProceeding with ' + signal + '\n')
+	print('\n\nProceeding with ' + signal + '\n')
 
 
 # Verify file exists
 # !os.path.exists(signal) -> giving error?
 if os.path.exists(signal) == False:
-    sys.stdout.write('Error, input signal not found "' + signal + '"')
+    print('Error, input signal not found "' + signal + '"')
     sys.exit()
 
 
@@ -79,19 +79,19 @@ from comparator import comparator
 
 
 # Analyze input track
-sys.stdout.write('\nReading audio signal & measuring tempo')
+print('\nReading audio signal & measuring tempo')
 trackAna = results.AudioValResult(name, signal)
 trackAna.setTempo()
 
 
 # Generate chromagram
-sys.stdout.write('\nSeparating haromic from percussive signal for chromagram analysis')
+print('\nSeparating haromic from percussive signal for chromagram analysis')
 trackAna.percusHarmonSep()
 trackAna.generateChromagram()
 
 
 # Set results
-sys.stdout.write('\nAnalyzing results and summarizing for classifier')
+print('\nAnalyzing results and summarizing for classifier')
 trackAna.analyzeChroma()
 trackAna.setResults()
 

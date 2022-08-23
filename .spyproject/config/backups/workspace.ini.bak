@@ -6,5 +6,5 @@ save_non_project_files = False
 
 [main]
 version = 0.2.0
-recent_files = ['audioValidator\\fetchResutsObject.py', 'audioValidator\\results\\results.py', 'audioValidator\\generator\\generator.py', 'audioValidator\\comparator\\comparator.py']
+recent_files = ['audioValidator\\fetchResutsObject.py', 'audioValidator\\run-comparator.py', 'audioValidator\\run-results-maker.py', 'audioValidator\\run-generator.py', 'audioValidator\\generator\\generator.py']
 

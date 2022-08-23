@@ -37,7 +37,7 @@ args = parser.parse_args()
 if args.mockData == None or args.name == None:
 
 	# Exit if no table is provided
-	sys.stdout.write('\n\nExiting, key variables not provided. Required arguments are input audio signal as WAV and an indentifier for this signal')
+	print('\n\nExiting, key variables not provided. Required arguments are input audio signal as WAV and an indentifier for this signal')
 	parser.print_help()
 	sys.exit()
 
@@ -46,20 +46,20 @@ if args.mockData == None or args.name == None:
 else:
 	mockData = args.mockData
 	name = args.name
-	sys.stdout.write('\n\nProceeding with ' + mockData + '\n')
+	print('\n\nProceeding with ' + mockData + '\n')
 
 
 # Handle optional args
 if args.output != None:
     output = args.output
     name = str(output + "/" + name)
-    sys.stdout.write('\n\nOptional output detected. Writing results to "' + name + '"')
+    print('\n\nOptional output detected. Writing results to "' + name + '"')
 
 
 # Verify file exists
 # !os.path.exists(signal) -> giving error?
 if os.path.exists(mockData) == False:
-    sys.stdout.write('Error, input data not found "' + mockData + '"')
+    print('Error, input data not found "' + mockData + '"')
     sys.exit()
 
 
@@ -86,7 +86,7 @@ mockSignal.generateSignal()
 
 # Export to wav: (1102262, 11022)
 mockSignal.exportWav(str(name + "-mock-signal.wav"))
-sys.stdout.write(
+print(
     "\nSignal generated for:\t" + str(name) + "\n" +
     "Generated wave:\t" + str(mockSignal.audioSignal.shape[0])
     + "\nSampling Rate:\t" + str(mockSignal.sampleRate)

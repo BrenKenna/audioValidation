@@ -16,6 +16,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.svm import SVC
 
+# Import resources
+from importlib import resources
+
+
 # 
 # Class to handle classification
 #   => Could maybe offer a little more simple things?
@@ -29,7 +33,7 @@ class AudioValComparator():
     def __init__(self):
         
         # Attributes for training
-        self.training = "comparator/summaries.json"
+        self.training = "summaries.json"
         self.data = None
         self.train = None
         self.labels = None
@@ -60,11 +64,19 @@ class AudioValComparator():
         
         # Attribute to hold its work?
         # self.results = []
-        
+    
+    
+    # Read generator resource
+    def readResource(self):
+        with resources.open_text("comparator", self.training) as file:
+            data = json.load(file)
+        file.close()
+        return data
+    
     
     # Load training data
     def loadTrainingSet(self):
-        self.data = pd.io.json.read_json(self.training)
+        self.data = pd.DataFrame(self.readResource())
         self.labels = self.data.Label
         self.train = self.data.drop(self.colsDrop, axis = 1)
 
