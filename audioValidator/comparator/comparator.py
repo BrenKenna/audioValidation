@@ -19,7 +19,6 @@ from sklearn.svm import SVC
 # Import resources
 from importlib import resources
 
-
 # 
 # Class to handle classification
 #   => Could maybe offer a little more simple things?

@@ -581,6 +581,3 @@ toDo = [
 
 # Run
 outMap = list(map( utils.classifyAudioSignal_fromTuple, toDo ))
-
-
-
