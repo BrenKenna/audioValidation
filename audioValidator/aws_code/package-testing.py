@@ -11,6 +11,14 @@ Core issue is rebuilding tracks
         => S3 as a data-lake much simpler, currently over complicates it
         
         => Nice experiment though
+        
+    -> Running questions:
+        1. How to handle conflicts with multiple consumers?
+        2. What are simple vs overly complicated uses?
+        3. When should people use kinesis instead of S3?
+        4. Do people ever work with shards of data?
+            => Say rebuiling 20MB file from N 4MB shards?
+        5. Other reasons to go MSK sides the size of input stream?
 
 Links:
     Kinesis with maximum of 200MB/s:
@@ -47,6 +55,7 @@ import io
 import gzip
 import base64
 import time
+
 
 
 ###############################
@@ -147,9 +156,6 @@ kinesis_client = boto3.client('kinesis')
 # Read data and compress
 audioSignal, sampleRate = librosa.load(trackPath)
 comprSignal = gzip.compress(base64.encodebytes((audioSignal.tobytes())))
-
-
-
 
 
 # Create data object to send: 1040000
@@ -274,9 +280,6 @@ while end < (len(comprSignal) + 1) :
 
 # 
 print(chunkLabel)
-
-
-
 
 
 '''
@@ -446,7 +449,6 @@ for shard in streamMetaData['StreamDescription']['Shards']:
 
 
 
-
 '''
 
 - Above works and came back in order
@@ -496,7 +498,6 @@ Iter-7-0 has N = '0' records
 Iter-7-0 has N = '0' records
 
 '''
-
 
 
 # Scope out results
@@ -565,4 +566,3 @@ from kafka import KafkaConsumer
 consumer = KafkaConsumer('my_favorite_topic')
 for msg in consumer:
     print (msg)
-
