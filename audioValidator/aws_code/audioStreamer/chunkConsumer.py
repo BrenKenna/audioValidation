@@ -27,10 +27,10 @@ import time
 
 
 # Consume stream
-def AudioChunkConsumer():
+class AudioChunkConsumer():
     
     # Initialize object
-    def __init__(self, trackName, trackPath, kinesisClient, streamName, partitionKey):
+    def __init__(self, trackName, trackPath, kinesisClient, streamName, partitionKey, sampleRate, trackLength):
         
         # Initialized attributes
         self.trackName = trackName
@@ -38,10 +38,12 @@ def AudioChunkConsumer():
         self.kinesisClient = kinesisClient
         self.streamName = streamName
         self.partitionKey = partitionKey
+        self.sampleRate = sampleRate
+        self.trackLength = trackLength
         
         
         # Built attributes
-        self.streamMetaData = None
+        self.streamMetaData = {}
         self.consumeParam = None
         self.audioLabels = []
         self.audioChunks = [ ]
@@ -50,7 +52,7 @@ def AudioChunkConsumer():
 
 
     # Rebuild compressed signal
-    def rebuildGzip(self):
+    def rebuildGzip(self, clearTmp = True):
         
         # Initialize before joining
         self.comprSignal = base64.b64decode(self.audioChunks[0][str(0)]['Wave'])
@@ -58,13 +60,13 @@ def AudioChunkConsumer():
             activeByte = base64.b64decode(self.audioChunks[i][str(i)]['Wave'])
             self.comprSignal = b"".join([self.comprSignal, activeByte])
 
-        # Return output
-        self.audioChunks = []
-        return self.comprSignal
+        # Handle clearing tmp data
+        if clearTmp:
+            self.audioChunks = []
     
     
     # Rebuild audio object
-    def rebuildAudio(self):
+    def rebuildAudio(self, clearTmp = True):
         
         # Decompress & decode to byte array
         rebuiltBytes = base64.decodebytes(gzip.decompress(self.comprSignal))
@@ -72,9 +74,29 @@ def AudioChunkConsumer():
         # Read numpy from buffer
         finalSignal = np.frombuffer(rebuiltBytes, dtype="float32")
         
-        # Update audio data
-        self.comprSignal = None
+        # Handle clearing temp data
+        if clearTmp:
+            self.comprSignal = None
+
+        # Return audio signal
         return finalSignal
+    
+    
+    # Set audio
+    def setAudio(self, clearTmp = True):
+        
+        # Rebuild audio dict
+        self.rebuildGzip(clearTmp)
+        
+        # Rebuild audio signal
+        audioSignal = self.rebuildAudio(clearTmp)
+        
+        # Set audio dict
+        self.audio = {
+            "wave": audioSignal,
+            "sampleRate": self.sampleRate,
+            "trackLength": self.trackLength
+        }
 
 
     # Initialize consume params
@@ -111,13 +133,19 @@ def AudioChunkConsumer():
 
         # Append if new
         if label not in self.audioLabels:
-            self.audioLabels.append(label)
-            print("Added record from " + self.consumeParam["Ieration"] + ", label = " + str(label))
-            
+
             # Handle matching partition key
             if matchPartitionKey:
-                if data["Partition Key"] == self.partitionKey:
+                if record["PartitionKey"] == self.partitionKey:
+                    self.audioLabels.append(label)
+                    print("Added record from " + str(self.consumeParam["Iteration"]) + ", label = " + str(label))
                     self.audioChunks.append(data)
+                    # print("Size is now: " + str(len(self.audioChunks)))
+                    
+                #else:
+                #    print("Partition Keys do not match:")
+                #    print("Supplied: " + self.partitionKey)
+                #    print("Returned: " + record["PartitionKey"])
 
             # Otherwise proceed
             else:
@@ -130,10 +158,10 @@ def AudioChunkConsumer():
 
 
     # Read records
-    def consumeShard(self, response):
+    def consumeShard(self, response, matchPartKey):
 
         # Consume data from shard
-        self.initConsumeParam(initial = True)
+        self.initConsumeParam(initial = False)
         while 'NextShardIterator' in response and self.consumeParam["Zero Streak"] < 3:
 
             # Note empty results
@@ -145,7 +173,7 @@ def AudioChunkConsumer():
                 
                 # Add unique records
                 while len(response["Records"]) > 0 and self.consumeParam["Dup Record"] < 3 :
-                    self.addRecord(response["Records"].pop(0))
+                    self.addRecord(response["Records"].pop(0), matchPartitionKey = matchPartKey)
             
             # Acknowledge loop breaches
             if self.consumeParam["Zero Streak"] > 3:
@@ -169,13 +197,16 @@ def AudioChunkConsumer():
 
 
     # Consume stream
-    def consumeStream(self):
+    def consumeStream(self, matchPartKey = False):
         
         # Fetch metadata
+        #  Should instead handle a 'ResourceNotFoundException',
+        #   however the if statements captures
         self.setMetaData()
 
         # Do not proceed if metadata is empty
         if "StreamDescription" not in self.streamMetaData:
+            print("Exiting from consuming a non-existent stream")
             return -1
         
         # Consume stream
@@ -195,8 +226,10 @@ def AudioChunkConsumer():
             )
             
             # Consume shard
-            self.consumeShard(response)
+            self.consumeShard(response, matchPartKey)
             self.consumeParam["Iteration"] += 1
+            # print("\n\nSize after this shards: " + str(len(self.audioChunks)))
         
         # Return iterations
+        # print("\n\nSize after all shards: " + str(len(self.audioChunks)))
         return self.consumeParam["Iteration"]

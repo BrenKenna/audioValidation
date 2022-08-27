@@ -45,10 +45,10 @@ class AudioChunkProducer():
 
         
      # Load track
-    def loadTrack(self, trackPath):
+    def loadTrack(self):
         
         # Crying out for try and except
-        y, sr = librosa.load(trackPath)
+        y, sr = librosa.load(self.trackPath)
         self.audio = {
             "wave": y,
             "sampleRate": sr,
@@ -118,7 +118,7 @@ class AudioChunkProducer():
     def postChunk(self):
         
         # Fetch data for active chunk
-        data = self.getChunk()
+        data = self.getChunk(self.chunkParam["Iteration"])
         
         # Post record
         response = self.kinesisClient.put_record(
@@ -150,5 +150,5 @@ class AudioChunkProducer():
             self.incrementChunk()
 
             # Handle breach
-            if self.chunkParam["End"] < (len(self.comprSignal) + 1) :
+            if self.chunkParam["End"] > (len(self.comprSignal) + 1) :
                 self.postChunk()
