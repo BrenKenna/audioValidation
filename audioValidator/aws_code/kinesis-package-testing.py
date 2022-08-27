@@ -2,6 +2,35 @@
 """
 Created on Sat Aug 27 12:05:54 2022
 
+
+- Could very much make do with base model classes
+    1. Audio
+    2. Stream daata
+
+- Can now look at putting a queue around consumption:
+    a). Creating & using
+    b). Data for each queue element
+
+- Can also consider given main deployment into replicate AZs:
+    - Each subnet having a number of baseline streams to read/write to
+    - Auto-scaling the available streams for each subnet
+    - Allowing and blocking new writes to these streams
+    - Deleting these streams once consumed
+    
+    => At the least requires the idea of:
+        a). AutoScaler module
+        b). Creator package
+        c). Destroyer package
+        d). Manager package
+
+    => It will allow the stream aspect to work like a data funnel,
+        before data touches storage & better optimize consuming
+        the filteration system.
+        
+    => It also means that while a users project will distributed
+        across multiple streams. A single track from a project will
+        be located in a single stream
+    
 @author: kenna
 """
 

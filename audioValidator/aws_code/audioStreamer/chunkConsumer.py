@@ -46,7 +46,7 @@ class AudioChunkConsumer():
         self.streamMetaData = {}
         self.consumeParam = None
         self.audioLabels = []
-        self.audioChunks = [ ]
+        self.audioChunks = []
         self.comprSignal = None
         self.audio = {}
 
@@ -63,6 +63,7 @@ class AudioChunkConsumer():
         # Handle clearing tmp data
         if clearTmp:
             self.audioChunks = []
+            self.audioLabels = []
     
     
     # Rebuild audio object
