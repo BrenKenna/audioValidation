@@ -23,13 +23,13 @@ class QueueManager():
         
     
     # Create queue
-    def createQueue(self):
+    def createQueue(self, delaySec = 10, timeout = 60):
         self.queue = self.sqsClient.create_queue(
             QueueName = self.queueName,
             Attributes = {
-                'DelaySeconds': '0',
+                'DelaySeconds': str(10),
                 'FifoQueue': 'true',
-                'VisibilityTimeout': '1'
+                'VisibilityTimeout': str(timeout)
             }
         )
     

@@ -165,7 +165,7 @@ from aws_code.queueManager import manager
 
 
 # Instantiate
-queueName = 'MyNewOtherTracksQueue'
+queueName = 'TracksQueue'
 queueMng = manager.QueueManager(queueName)
 
 
