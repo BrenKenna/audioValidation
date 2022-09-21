@@ -73,16 +73,49 @@ toDo = [
 
 for item in toDo:
     partitionKey = str(item[0] + "/" + item[1])
-    sqsClient.send_message(QueueUrl = queue['QueueUrl'], MessageBody = partitionKey, MessageGroupId = item[0], MessageDeduplicationId = partitionKey)
+    sqsClient.send_message(
+        QueueUrl = queueUrl,
+        MessageBody = partitionKey,
+        MessageGroupId = item[0],
+        MessageDeduplicationId = partitionKey,
+        MessageAttributes = {
+            'UserID': {
+                'StringValue': item[0],
+                'DataType': 'String'
+            },
+            'TrackName': {
+                'StringValue': item[1],
+                'DataType': 'String'
+            },
+            'TrackPath': {
+                'StringValue': item[2],
+                'DataType': 'String'
+            }
+        }
+    )
 
 
 
 
 # Get messages
+sqs = boto3.resource('sqs')
+queue = sqs.get_queue_by_name(QueueName = 'test.fifo')
+response = queue.receive_messages()
+
+msg = response[0]
+print(msg.body)
+msg.delete
+
+
+# Get and delete
+queueUrl = 'https://eu-west-1.queue.amazonaws.com/017511708259/test.fifo'
 response = sqsClient.receive_message(QueueUrl = queueUrl)
-response.keys()
-len(response['Messages'])
-response['Messages'][0].keys()
+message = response['Messages'][0]
+sqsClient.delete_message(
+    QueueUrl = queueUrl,
+    ReceiptHandle = message['ReceiptHandle']
+)
+
 
 '''
 
@@ -114,5 +147,56 @@ dict_keys(['MessageId', 'ReceiptHandle', 'MD5OfBody', 'Body'])
 # Above could benefit from considering message attributes
 sqsClient.get_queue_attributes(
     QueueUrl = queueUrl,
-    AttributeNames = [ 'Some Attribute' ]
+    AttributeNames = [ 'TrackName' ]
 )
+
+
+############################################################################
+############################################################################
+#
+# Test queueManager
+#
+############################################################################
+############################################################################
+
+
+# Import class
+from aws_code.queueManager import manager
+
+
+# Instantiate
+queueName = 'MyNewOtherTracksQueue'
+queueMng = manager.QueueManager(queueName)
+
+
+# Create queue
+queueMng.createQueue()
+
+
+# Delete queue
+#queueMng.deleteQueue()
+
+
+# Set queue
+#queueName = 'NewTracksQueue'
+#queueMng.setQueueName(queueName, createQueue = True)
+
+
+# Add messages
+toDo = [
+   ('user-1', 'FeelSoNumb', 'examples/test/Feel-So-Numb.wav'),
+   ('user-2', 'DeathGodOfThunder', 'examples/test/God-of-Thunder.wav'),
+   ('user-1', 'Melechesh1', 'examples/test/Grand-Gathas-of-Baal-Sin.wav'),
+   ('user-2', 'Superbeast', 'examples/test/Superbeast.wav'),
+   ('user-3', 'Melechesh2', 'examples/test/Tempest-Temper-Enlil-Enraged.wav')
+]
+queueMng.sendMessages(toDo)
+
+
+# Poll a message
+message = queueMng.pollMsg()
+print(message)
+
+
+
+
