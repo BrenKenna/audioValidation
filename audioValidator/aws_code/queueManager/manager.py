@@ -67,6 +67,8 @@ class QueueManager():
             'UserID': data[0],
             'TrackName': data[1],
             'TrackPath': data[2],
+            'SampleRate': data[3],
+            'TrackLength': data[4],
             'PartitionKey': partitionKey
         }
 

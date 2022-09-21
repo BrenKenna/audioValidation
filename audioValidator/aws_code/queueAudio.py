@@ -27,12 +27,14 @@ class QueuedAudio():
         self.kinesisClient = boto3.client('kinesis')
         self.chunkProducer = chunkProducer
         self.queueMngr = queueMngr
-        
+        self.queueName = queueMngr.queueName
+
         # Set core variables
         self.trackName = chunkProducer.trackName
         self.userID = chunkProducer.userID
         self.trackPath = chunkProducer.trackPath
-        self.queueName = queueMngr.queueName
+        self.sampleRate = chunkProducer.sampleRate
+        self.trackLength = chunkProducer.trackLength        
 
 
     # Stream audio & enqueue
@@ -42,7 +44,13 @@ class QueuedAudio():
         self.chunkProducer.streamAudioChunks()
         
         # Enqueue sharded audio stream
-        data = (self.userID, self.trackName, self.trackPath)
+        data = (
+            self.userID,
+            self.trackName,
+            self.trackPath,
+            self.sampleRate,
+            self.trackLength
+        )
         self.queueMngr.sendMsg(data)
         
         # Clear producer
@@ -77,7 +85,7 @@ class QueuedAudio():
 
 
     # Poll an audio stream
-    def pollAudioStream(self, streamName, sampleRate = 0, trackLength = 0):
+    def pollAudioStream(self, streamName):
         
         # Poll audio
         message = self.queueMngr.pollMsg()
@@ -93,12 +101,13 @@ class QueuedAudio():
             self.kinesisClient,
             streamName,
             consumerData['PartitionKey'],
-            sampleRate,
-            trackLength
+            consumerData['SampleRate'],
+            consumerData['TrackLength']
         )
 
         # Consume sharded audio stream for the partition key
         consumeState = audioConsumer.consumeStream(matchPartKey = True)
+        if consumeState != -1:
 
-        # Set audio data on consumer
-        audioConsumer.setAudio()
+            # Rebuild audio signal & set attributes on consumer
+            audioConsumer.setAudio()
