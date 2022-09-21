@@ -109,6 +109,7 @@ partitionKey = "user-1/" + trackName
 sampleRate = audioProd.audio["sampleRate"]
 trackLength = audioProd.audio["sampleRate"]
 
+
 # Instantiate consumer
 audioConsumer = chunkConsumer.AudioChunkConsumer(trackName, trackPath, kinesisClient, streamName, partitionKey, sampleRate, trackLength)
 

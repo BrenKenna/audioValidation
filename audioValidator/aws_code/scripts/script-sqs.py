@@ -174,12 +174,24 @@ queueMng.createQueue()
 
 
 # Delete queue
-#queueMng.deleteQueue()
+queueMng.deleteQueue()
 
 
 # Set queue
-#queueName = 'NewTracksQueue'
-#queueMng.setQueueName(queueName, createQueue = True)
+queueName = 'NewTracksQueue'
+queueMng.setQueueName(queueName, createQueue = True)
+
+
+
+# Get queue
+queueName = 'TracksQueue'
+queueMng = manager.QueueManager(queueName)
+queueMng.getQueue()
+
+
+# Test single post with json string body
+data = ('user-1', 'FeelSoNumb', 'examples/test/Feel-So-Numb.wav')
+queueMng.sendMsg(data)
 
 
 # Add messages
@@ -198,5 +210,6 @@ message = queueMng.pollMsg()
 print(message)
 
 
-
+# Get message
+message = queueMng.getMsg()
 

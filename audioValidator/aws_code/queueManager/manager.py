@@ -63,28 +63,21 @@ class QueueManager():
         
         # Create post args
         partitionKey = str(data[0] + "/" + data[1])
-        msgAttributes = {
-            'UserID': {
-                'StringValue': data[0],
-                'DataType': 'String'
-            },
-            'TrackName': {
-                'StringValue': data[1],
-                'DataType': 'String'
-            },
-            'TrackPath': {
-                'StringValue': data[2],
-                'DataType': 'String'
-            }
+        msgBody = {
+            'UserID': data[0],
+            'TrackName': data[1],
+            'TrackPath': data[2],
+            'PartitionKey': partitionKey
         }
-        
+
+        # 
         # Post message
+        # MessageAttributes = msgAttributes
         response = self.sqsClient.send_message(
             QueueUrl = self.queue['QueueUrl'],
-            MessageBody = partitionKey,
+            MessageBody = json.dumps(msgBody),
             MessageGroupId = data[0],
-            MessageDeduplicationId = partitionKey,
-            MessageAttributes = msgAttributes
+            MessageDeduplicationId = partitionKey
         )
         return response
     
@@ -104,6 +97,7 @@ class QueueManager():
             return response['Messages'][0]
         return None
 
+
     # Delete message
     def deleteMsg(self, message):
         if 'ReceiptHandle' in message:
@@ -112,9 +106,11 @@ class QueueManager():
                 ReceiptHandle = message['ReceiptHandle']
             )
 
+
     # Poll message
     def pollMsg(self):
         message = self.getMsg()
+        print(message)
         if message != None:
             self.deleteMsg(message)
         return message
