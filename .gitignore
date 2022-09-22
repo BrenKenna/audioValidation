@@ -5,3 +5,7 @@ pyAudioAna*
 collection-java.txt
 *pyc
 *workspace*
+*.docx
+*pem
+*DS_Store
+spark-emr.tar.gz
