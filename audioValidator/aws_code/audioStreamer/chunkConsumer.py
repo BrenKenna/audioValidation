@@ -139,7 +139,7 @@ class AudioChunkConsumer():
             if matchPartitionKey:
                 if record["PartitionKey"] == self.partitionKey:
                     self.audioLabels.append(label)
-                    print("Added record from " + str(self.consumeParam["Iteration"]) + ", label = " + str(label))
+                    #print("Added record from " + str(self.consumeParam["Iteration"]) + ", label = " + str(label))
                     self.audioChunks.append(data)
                     # print("Size is now: " + str(len(self.audioChunks)))
                     

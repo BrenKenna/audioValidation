@@ -27,7 +27,7 @@ class QueueManager():
         self.queue = self.sqsClient.create_queue(
             QueueName = self.queueName,
             Attributes = {
-                'DelaySeconds': str(10),
+                'DelaySeconds': str(delaySec),
                 'FifoQueue': 'true',
                 'VisibilityTimeout': str(timeout)
             }

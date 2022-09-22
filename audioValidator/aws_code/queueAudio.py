@@ -12,36 +12,40 @@ import json
 
 
 # Packae modules
-from queueManager import manager
-from audioStream import chunkConsumer
-from audioStream import chunkConsumer
+from aws_code.queueManager import manager
+from aws_code.audioStreamer import chunkProducer
+from aws_code.audioStreamer import chunkConsumer
 
 
 # Class to support producing & consuming the audio streams under a queue
 class QueuedAudio():
     
     # Attributes
-    def __init__(self, chunkProducer, queueMngr):
+    def __init__(self, kinesisClient, queueMngr, audioProducer):
         
         # Producers instantiated externally
-        self.kinesisClient = boto3.client('kinesis')
-        self.chunkProducer = chunkProducer
+        self.kinesisClient = kinesisClient
+        self.audioProducer = audioProducer
         self.queueMngr = queueMngr
         self.queueName = queueMngr.queueName
 
         # Set core variables
-        self.trackName = chunkProducer.trackName
-        self.userID = chunkProducer.userID
-        self.trackPath = chunkProducer.trackPath
-        self.sampleRate = chunkProducer.sampleRate
-        self.trackLength = chunkProducer.trackLength        
+        self.trackName = audioProducer.trackName
+        self.userID = audioProducer.userID
+        self.trackPath = audioProducer.trackPath
+        self.sampleRate = None
+        self.trackLength = None
 
+        # Audio dict
+        self.audio = {}
 
     # Stream audio & enqueue
     def enqueueStream(self, clearProducer = False):
         
         # Shard & stream audio
-        self.chunkProducer.streamAudioChunks()
+        self.audioProducer.streamAudioChunks()
+        self.sampleRate = self.audioProducer.audio['sampleRate']
+        self.trackLength = self.audioProducer.audio['trackLength']
         
         # Enqueue sharded audio stream
         data = (
@@ -77,23 +81,26 @@ class QueuedAudio():
         
 
     # Set producer
-    def setProducer(self, chunkProducer):
-        self.chunkProducer = chunkProducer
-        self.trackName = chunkProducer.trackName
-        self.userID = chunkProducer.userID
-        self.trackPath = chunkProducer.trackPath
+    def setProducer(self, audioProducer):
+        self.audioProducer = audioProducer
+        self.trackName = audioProducer.trackName
+        self.userID = audioProducer.userID
+        self.trackPath = audioProducer.trackPath
 
 
     # Poll an audio stream
     def pollAudioStream(self, streamName):
         
         # Poll audio
+        print('\nPolling message')
+        # message = self.queueMngr.getMsg()
         message = self.queueMngr.pollMsg()
         if message == None:
             print('\nQueue has been consumed')
             return True
 
         # Instantiate consumer from message
+        print('\nCreating consumer')
         consumerData = json.loads(message['Body'])
         audioConsumer = chunkConsumer.AudioChunkConsumer(
             consumerData['TrackName'],
@@ -106,8 +113,13 @@ class QueuedAudio():
         )
 
         # Consume sharded audio stream for the partition key
+        print('\nConsuming audio stream for track: ' + consumerData['PartitionKey'])
         consumeState = audioConsumer.consumeStream(matchPartKey = True)
         if consumeState != -1:
 
             # Rebuild audio signal & set attributes on consumer
+            print('\nRebuilding audio stream')
             audioConsumer.setAudio()
+            
+            # Output audio dict
+            self.audio = audioConsumer.audio

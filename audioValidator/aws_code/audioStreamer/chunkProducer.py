@@ -25,11 +25,11 @@ import base64
 import time
 
 
-
 # Class to support chunking an audio signal
+#   => Consider later making stream unique
 class AudioChunkProducer():
     
-    def __init__(self, trackName, trackPath, kinesisClient, streamName, partitionKey):
+    def __init__(self, trackName, trackPath, kinesisClient, streamName, partitionKey, userID):
         
         # Initialized attributes
         self.trackName = trackName
@@ -37,6 +37,7 @@ class AudioChunkProducer():
         self.kinesisClient = kinesisClient
         self.streamName = streamName
         self.partitionKey = partitionKey
+        self.userID = userID
         
         # Built attributes
         self.audio = None
