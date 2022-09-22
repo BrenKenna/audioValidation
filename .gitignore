@@ -9,3 +9,5 @@ collection-java.txt
 *pem
 *DS_Store
 spark-emr.tar.gz
+.terraform*
+terraform.tfstate*

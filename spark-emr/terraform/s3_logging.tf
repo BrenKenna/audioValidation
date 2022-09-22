@@ -10,6 +10,7 @@
 ####################################################################
 
 
+/*
 # Create logging bucket
 resource "aws_s3_bucket" "cluster-bucket" {
   bucket = "${var.cluster-general.bucketName}"
@@ -21,3 +22,5 @@ resource "aws_s3_bucket_acl" "cluster-bucket" {
   bucket = aws_s3_bucket.cluster-bucket.id
   acl    = "private"
 }
+
+*/

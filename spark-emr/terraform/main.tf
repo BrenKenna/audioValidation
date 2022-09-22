@@ -1,7 +1,9 @@
 ##########################################################
 ##########################################################
 # 
-# Spinup Cluster
+# Spinup Cluster:
+#  -> Changed version from 5.9 to 6.7
+#  -> Version 6.7 uses python3
 #
 ##########################################################
 ##########################################################
@@ -11,7 +13,7 @@ resource "aws_emr_cluster" "spark-cluster" {
 
    # Cluster data
     name = "EMR Terraform Cluster"
-    release_label = "emr-5.9.0"
+    release_label = "emr-6.7.0"
     applications = [ "Ganglia", "Spark", "Zeppelin", "Hive", "Hue" ]
     service_role = "${aws_iam_role.sparkClusterRole.arn}"
     log_uri = "${var.cluster-general.loggingUri}"
@@ -21,11 +23,11 @@ resource "aws_emr_cluster" "spark-cluster" {
     }
     # depends_on = [ aws_s3_bucket.cluster-bucket ]
 
-    # Configur ec2 instance network, keys, auth & sec
+    # Configure ec2 instance network, keys, auth & sec
     ec2_attributes {
         instance_profile = "${aws_iam_instance_profile.spark-emr-profile.arn}"
         key_name = "${var.cluster-general.key}"
-        subnet_id = "${aws_subnet.headnode_subnet.id}"
+        subnet_id = "${aws_subnet.cluster_subnet.id}"
         emr_managed_master_security_group = "${aws_security_group.headnode-sg.id}"
         emr_managed_slave_security_group = "${aws_security_group.workernode-sg.id}"
     }

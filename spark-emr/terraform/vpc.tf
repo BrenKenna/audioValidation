@@ -1,20 +1,18 @@
 #################################################
 #################################################
 # 
-# Configure VPC, Subnets, IGW & Routing
+# Configure VPC, Subnets & Routing
 #
-#  No consideration for worker nat yet
-# 
 #################################################
 #################################################
 
-##########################
-##########################
+####################################
+####################################
 # 
-# VPC, Subnets & IGW
+# VPC & Subnets
 # 
-##########################
-##########################
+####################################
+####################################
 
 # Create VPC
 resource "aws_vpc" "clusterVPC" {
@@ -26,72 +24,26 @@ resource "aws_vpc" "clusterVPC" {
     }
 }
 
-# Configure head node subnet
-resource "aws_subnet" "headnode_subnet" {
+# Configure bastion node subnet
+resource "aws_subnet" "bastion_subnet" {
     vpc_id = aws_vpc.clusterVPC.id
-    cidr_block = var.cluster-network.az1_subnets.head
+    cidr_block = var.cluster-network.az1_subnets.bastionCidrBlock
     availability_zone = var.cluster-network.az1_subnets.availZone
     map_public_ip_on_launch = true
     tags = {
-        Name = "headnode-subnet"
+        Name = "bastion-subnet"
     }
     depends_on = [ aws_vpc.clusterVPC ]
 }
 
-# Configure worker node subnet
-resource "aws_subnet" "workernode_subnet" {
+# Configure cluster subnet
+resource "aws_subnet" "cluster_subnet" {
     vpc_id = aws_vpc.clusterVPC.id
-    cidr_block = var.cluster-network.az1_subnets.worker
+    cidr_block = var.cluster-network.az1_subnets.clusterCidrBlock
     availability_zone = var.cluster-network.az1_subnets.availZone
-    map_public_ip_on_launch = true
+    map_public_ip_on_launch = false
     tags = {
-        Name = "workernode-subnet"
+        Name = "cluster-subnet"
     }
     depends_on = [ aws_vpc.clusterVPC ]
-}
-
-# Internet gateway
-resource "aws_internet_gateway" "cluster-igw" {
-    vpc_id = aws_vpc.clusterVPC.id
-    tags = {
-        Name = "${var.cluster-network.igw_name}"
-    }
-    depends_on = [ aws_subnet.workernode_subnet, aws_subnet.headnode_subnet ]
-}
-
-##########################
-##########################
-# 
-# Routes
-# 
-##########################
-##########################
-
-# Create route table
-resource "aws_route_table" "cluster-rtb-pub" {
-    vpc_id = aws_vpc.clusterVPC.id
-    tags = {
-        Name = "cluster-rtb-pub"
-    }
-    depends_on = [ aws_internet_gateway.cluster-igw ]
-}
-
-# Route out to any IP via gateway
-resource "aws_route" "cluster-igw-route" {
-    route_table_id = aws_route_table.cluster-rtb-pub.id
-    destination_cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.cluster-igw.id
-    depends_on = [ aws_route_table.cluster-rtb-pub ]
-}
-
-# Associate the head & worker node subnets to the route table
-resource "aws_route_table_association" "cluster-rta-head" {
-    subnet_id = "${aws_subnet.headnode_subnet.id}"
-    route_table_id = "${aws_route_table.cluster-rtb-pub.id}"
-    depends_on = [ aws_route.cluster-igw-route ]
-}
-resource "aws_route_table_association" "cluster-rta-worker" {
-    subnet_id = "${aws_subnet.workernode_subnet.id}"
-    route_table_id = "${aws_route_table.cluster-rtb-pub.id}"
-    depends_on = [ aws_route.cluster-igw-route ]
 }

@@ -24,8 +24,8 @@ variable "cluster-network" {
         #   another for workers
         az1_subnets = object({
             availZone = string 
-            head = string
-            worker = string
+            bastionCidrBlock = string
+            clusterCidrBlock = string
         })
 
         /*
@@ -34,8 +34,8 @@ variable "cluster-network" {
         #   ignore for now though
         az2_subnets = object({
             availZone = string 
-            head = string
-            worker = string
+            bastionCidrBlock = string
+            clusterCidrBlock = string
         })
         */
     })
@@ -50,15 +50,15 @@ variable "cluster-network" {
         # For eu-west-1a
         az1_subnets = {
             "availZone": "eu-west-1a",
-            "head": "192.168.1.0/24",
-            "worker": "192.168.2.0/24"
+            "bastionCidrBlock": "192.168.1.0/24",
+            "clusterCidrBlock": "192.168.2.0/24"
         }
 
         /*
         az2_subnets = {
             "availZone": "eu-west-1b",
-            "head": "192.168.3.0/24",
-            "worker": "192.168.4.0/24"
+            "bastionCidrBlock": "192.168.3.0/24",
+            "clusterCidrBlock": "192.168.4.0/24"
         }
         */
     }
