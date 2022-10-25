@@ -16,7 +16,7 @@ The context is a paranoid & fun one to learn more about AWS's big data solutions
 
 ### Overview
 
-Overall the project is in a very nice position with an example classifier that can be map reducable, and has a working kinesis stream producer & consumer for sharding & rebuilding a compressed audio signal. So some of the hardest parts have been done first. Few more to tackle as the below summary points highlight.
+Overall the project is in a very nice position with an example classifier that can be map reducable, and has a working kinesis stream producer & consumer for sharding & rebuilding a compressed audio signal. Consuming audio streams is also managed by a FIFO queue, where a message is metadata for the compressed data chunks within kinesis stream. So some of the hardest parts have been done first, with a few more to tackle as the below summary points highlight.
 
 
 
@@ -24,11 +24,10 @@ As per the below, the next steps are around putting a queue to consuming data st
 
 
 
-With the queue now completed, can start to look at embedding the audioValidator into previous EMR TF code. Need to rerun & become familiar with again before updating the EMR version used by that code, then start the bootstrapping (python3, librosa + dependencies + audioValidator). To b tested out with a single track, then look to 10 etc
+With the queue now completed, can start to look at embedding the audioValidator into previous EMR TF code. Need to rerun & become familiar with again before updating the EMR version used by that code, then start the bootstrapping (python3, librosa + dependencies + audioValidator). To be tested out with a single track, then look to 10 etc. 
 
 
-
-Then see where things lie there, in general and the notion of auto-scaling kinesis streams.
+Then see where things lie there, in general and the notion of 'auto-scaling' kinesis streams so that an instance of a consumer app does not read all data but a subset of data. For instance a subnet hosting an app has N streams to distribute entire audio signals to, the specific number is dynamic and scales with an ASG.
 
 ### Summary Points
 
@@ -36,7 +35,7 @@ Then see where things lie there, in general and the notion of auto-scaling kines
 
 2. Packaged up the tested & debugged audioValidator and streamer modules with their respective data. Tried to make use of the "***init.py***" and "***importlib.resources***" module where I can. But still kind of new to that, like it very much all the same.
 
-3. Need to consider baseline objects that are commonly encountered:
+3. Need to consider core/central model/model collection objects that are commonly encountered:
    
    1. Audio with the wave, sample rate and track lengths
    
@@ -50,6 +49,6 @@ Then see where things lie there, in general and the notion of auto-scaling kines
    
    2. Current package test does both enqueing & consuming the data related to a polled message. Setting audio property on this object, can allow the comparator to just use that data.
       
-      
+5. Example for how a terraform can assume a role means that the infrastructure can be spun-up/down from a bastion host without needing access keys.
 
-5. Given how bandCloud is deployed into multiple AZs, considering the idea that each AZ can have a number of baseline streams that they write to. Where additional streams can be created & destroyed to handle increased traffic to bandCloud. The rational is to better optimize the use of streams in terms of cost & performance, because distributing the consumption across streams lowers the number of gzipped compressed track shards per stream. Because the consumer can directed to a specific stream for a specific track / list of tracks :)
+6. Given how bandCloud is deployed into multiple AZs, considering the idea that each AZ can have a number of baseline streams that they write to. Where additional streams can be created & destroyed to handle increased traffic to bandCloud. The rational is to better optimize the use of streams in terms of cost & performance, because distributing the consumption across streams lowers the number of gzipped compressed track shards per stream. Because the consumer can directed to a specific stream for a specific track / list of tracks :)
