@@ -2,7 +2,7 @@
 
 ## Overview
 
-Exploring an EMR supported audio validation system using the Librosa & SoundFile packages. The main elements being explored are how to classify a mock audio signal vs a real audio signal by using "***audio fingerprinting***". Then how to deliver data into this system preferencing the idea that data streaming can act as a funnel before that data touches storage.
+Exploring an EMR supported audio validation system using the Librosa packages. The main elements being explored are how to classify a mock audio signal vs a real audio signal by using "***audio fingerprinting***". Then how to deliver data into this system preferencing the idea that data streaming can act as a funnel before that data touches storage.
 
 The context is a paranoid & fun one to learn more about AWS's big data solutions from a continous computing perspective, over a batch computing perspective (like  ***PyAnamo***). Longterm the system can be deployed alongside bandCloud. Allowing the application to validate the audio data it recieves and then take action based on the results in real-time. So that the bandCloud service isn't a glorified malware storage system, with audio data being the vector :).
 
