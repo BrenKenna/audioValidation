@@ -1,20 +1,32 @@
-######################################################
-######################################################
+###############################################################
+###############################################################
 # 
-# Security Groups for Head & Worker
+# Security Groups for Head/Worker nodes & Service Access
 #   Long term be nice to see how to lockdown
 # 
-######################################################
-######################################################
+###############################################################
+###############################################################
+
+
+###########################################
+###########################################
+# 
+# Headnode
+# 
+###########################################
+###########################################
 
 # Security group for headnode
 resource "aws_security_group" "cluster-headnode-sg" {
-    name = "cluster-headnode-sg"
+    name = "ElasticMapReduce-Master-Private"
     description = "Security group for cluster headnode"
     vpc_id = "${aws_vpc.clusterVPC.id}"
     revoke_rules_on_delete = true
     tags = {
-        name = "cluster-headnode-sg"
+        Name = "ElasticMapReduce-Master-Private"
+    }
+    lifecycle {
+        ignore_changes = [ingress, egress]
     }
 
     # Allow internal traffic, could be configured better
@@ -25,12 +37,12 @@ resource "aws_security_group" "cluster-headnode-sg" {
         cidr_blocks = [ "${var.cluster-network.cidrBlock}" ]
     }
 
-    # Allow bastion ssh traffic
+    # Allow vpc ssh traffic
     ingress {
         from_port = 22
         to_port = 22
         protocol = "TCP"
-        cidr_blocks = [ "${var.cluster-network.az1_subnets.bastionCidrBlock}" ]
+        cidr_blocks = [ "${var.cluster-network.cidrBlock}" ]
     }
 
     # Yarn from bastion
@@ -99,22 +111,71 @@ resource "aws_security_group" "cluster-headnode-sg" {
 }
 
 
-#################################
-#################################
+###########################################
+###########################################
+# 
+# Service Access SG
+# 
+###########################################
+###########################################
+
+# Create service access security group
+resource "aws_security_group" "service-access-sg" {
+    name = "ElasticMapReduce-ServiceAccess"
+    description = "Service access security group"
+    vpc_id = "${aws_vpc.clusterVPC.id}"
+    tags = {
+        "Name": "ElasticMapReduce-ServiceAccess"
+    }
+    depends_on = [ aws_security_group.cluster-headnode-sg ]
+    lifecycle {
+        ignore_changes = [ingress, egress]
+    }
+
+    ingress {
+        from_port = 9443
+        to_port = 9443
+        protocol = "TCP"
+        cidr_blocks = [ "${var.cluster-network.cidrBlock}" ]
+    }
+
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "TCP"
+        cidr_blocks = [ "0.0.0.0/0" ] # SG of worker & task nodes
+    }
+
+    /*
+    egress {
+        from_port = 8443
+        to_port = 8443
+        protocol = "TCP"
+        cidr_blocks = [ "${var.cluster-network.cidrBlock}" ]
+    }
+    */
+}
+
+
+###########################################
+###########################################
 # 
 # Worker node
 # 
-#################################
-#################################
+###########################################
+###########################################
 
 
 # Worker node
 resource "aws_security_group" "cluster-workernode-sg" {
-    name = "cluster-workernode-sg"
+    name = "ElasticMapReduce-Slave-Private"
     description = "Security group for cluster worker node"
     vpc_id = "${aws_vpc.clusterVPC.id}"
     tags = {
-        name = "cluster-workernode-sg"
+        Name = "ElasticMapReduce-Slave-Private"
+    }
+    lifecycle {
+        ignore_changes = [ingress, egress]
     }
  
     # Allow internal traffic, could be configured better
@@ -125,12 +186,12 @@ resource "aws_security_group" "cluster-workernode-sg" {
         cidr_blocks = [ "${var.cluster-network.cidrBlock}" ]
     }
  
-    # Allow ssh traffic from bastion
+    # Allow ssh traffic from vpc
     ingress {
         from_port = 22
         to_port = 22
         protocol = "TCP"
-        cidr_blocks = [ "${var.cluster-network.az1_subnets.bastionCidrBlock}" ]
+        cidr_blocks = [ "${var.cluster-network.cidrBlock}" ]
     }
 
     # Outbound

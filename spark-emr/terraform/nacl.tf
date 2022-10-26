@@ -8,7 +8,6 @@
 ######################################################
 
 
-
 #########################################
 #########################################
 #
@@ -43,7 +42,7 @@ resource "aws_network_acl_rule" "inbound-ssh-cluster" {
     egress = false
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "${var.az1_subnets.clusterCidrBlock}"
+    cidr_block = "${var.cluster-network.cidrBlock}"
     from_port = 22
     to_port = 22
     depends_on = [ aws_network_acl.cluster-nacl ]
@@ -54,7 +53,7 @@ resource "aws_network_acl_rule" "outbound-ssh-cluster" {
     egress = true
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "${var.az1_subnets.clusterCidrBlock}"
+    cidr_block = "${var.cluster-network.cidrBlock}"
     from_port = 22
     to_port = 22
     depends_on = [ aws_network_acl.cluster-nacl ]
@@ -76,7 +75,7 @@ resource "aws_network_acl_rule" "inbound-http-cluster" {
     egress = false
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "${var.az1_subnets.clusterCidrBlock}"
+    cidr_block = "${var.cluster-network.cidrBlock}"
     from_port = 80
     to_port = 80
     depends_on = [ aws_network_acl.cluster-nacl ]
@@ -87,7 +86,7 @@ resource "aws_network_acl_rule" "outbound-http-cluster" {
     egress = true
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "${var.az1_subnets.clusterCidrBlock}"
+    cidr_block = "0.0.0.9/0"
     from_port = 80
     to_port = 80
     depends_on = [ aws_network_acl.cluster-nacl ]
@@ -132,7 +131,7 @@ resource "aws_network_acl_rule" "inbound-ephem-cluster" {
     egress = false
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "${var.az1_subnets.clusterCidrBlock}"
+    cidr_block = "${var.cluster-network.cidrBlock}"
     from_port = 1024
     to_port = 65535
     depends_on = [ aws_network_acl.cluster-nacl ]
@@ -143,9 +142,46 @@ resource "aws_network_acl_rule" "outbound-ephem-cluster" {
     egress = true
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "${var.az1_subnets.clusterCidrBlock}"
+    cidr_block = "0.0.0.0/0"
     from_port = 1024
     to_port = 65535
+    depends_on = [ aws_network_acl.cluster-nacl ]
+}
+
+
+############################
+############################
+#
+# Ping Internet Access
+#
+############################
+############################
+
+# Allow in/out ping
+resource "aws_network_acl_rule" "inbound-ping-cluster" {
+    network_acl_id = aws_network_acl.cluster-nacl.id
+    rule_number = 104
+    egress = false
+    protocol = "icmp"
+    rule_action = "allow"
+    cidr_block = "${var.cluster-network.cidrBlock}"
+    from_port = -1
+    to_port = -1
+    icmp_type = -1
+    icmp_code = -1
+    depends_on = [ aws_network_acl.cluster-nacl ]
+}
+resource "aws_network_acl_rule" "outbound-ping-cluster" {
+    network_acl_id = aws_network_acl.cluster-nacl.id
+    rule_number = 104
+    egress = true
+    protocol = "icmp"
+    rule_action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = -1
+    to_port = -1
+    icmp_type = -1
+    icmp_code = -1
     depends_on = [ aws_network_acl.cluster-nacl ]
 }
 
@@ -285,7 +321,7 @@ resource "aws_network_acl_rule" "inbound-ephem-bastion" {
     egress = false
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "${var.az1_subnets.clusterCidrBlock}"
+    cidr_block = "0.0.0.0/0"
     from_port = 1024
     to_port = 65535
     depends_on = [ aws_network_acl.bastion-nacl ]
@@ -296,7 +332,7 @@ resource "aws_network_acl_rule" "outbound-ephem-bastion" {
     egress = true
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "${var.az1_subnets.bastionCidrBlock}"
+    cidr_block = "0.0.0.0/0"
     from_port = 1024
     to_port = 65535
     depends_on = [ aws_network_acl.bastion-nacl ]

@@ -32,7 +32,7 @@ resource "aws_route" "bastion-igw-route" {
 }
 
 # Associate the bastion subnet to route table
-resource "aws_route_table_association" "cluster-rta" {
+resource "aws_route_table_association" "bastion-rta" {
     subnet_id = "${aws_subnet.bastion_subnet.id}"
     route_table_id = "${aws_route_table.bastion-rtb-pub.id}"
     depends_on = [ aws_route.bastion-igw-route ]
@@ -66,7 +66,7 @@ resource "aws_route" "cluster-nat-route" {
 
 # Associate the bastion subnet to route table
 resource "aws_route_table_association" "cluster-rta" {
-    subnet_id = "${aws_subnet.bastion_subnet.id}"
-    route_table_id = "${aws_route_table.bastion-rtb-pub.id}"
-    depends_on = [ aws_route.bastion-igw-route ]
+    subnet_id = "${aws_subnet.cluster_subnet.id}"
+    route_table_id = "${aws_route_table.cluster-rtb-priv.id}"
+    depends_on = [ aws_route.cluster-nat-route ]
 }

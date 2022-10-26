@@ -1,19 +1,58 @@
-##################################################
-##################################################
+##########################################################
+##########################################################
 # 
 # 
 # 
-##################################################
-##################################################
+##########################################################
+##########################################################
+
+#######################################
+#######################################
+#
+# 1). AMI for managing cluster
+#
+#######################################
+#######################################
 
 
-############################
-############################
+# Install terraform etc
+sudo su
+yum update -y
+yum install -y yum-utils git
+yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+yum -y install terraform
+
+
+# Fetch repo
+git clone --recursive https://github.com/BrenKenna/audioValidation.git
+
+
+# Create image with Tf, git & repo
+aws ec2 create-image \
+    --instance-id "i-0306e4352de2a05f0" \
+    --name "emrTerraformAMI" \
+    --description "Managing an audio validation cluster"
+
+
+# Setup
+terraform init
+
+
+# Plan resources
+terraform plan
+
+
+# Create resources
+terraform apply
+
+
+#######################################
+#######################################
 # 
-# Install software
+# 2). Install audio software
 # 
-############################
-############################
+#######################################
+#######################################
 
 # Install via pip
 pip install librosa matplotlib numpy pandas scikit-learn
@@ -45,6 +84,7 @@ python run-results-maker.py -s "examples\test\Tempest-Temper-Enlil-Enraged.wav" 
 # Generate classification
 python run-comparator.py -s "examples\test\Tempest-Temper-Enlil-Enraged.wav" -n "Melechesh"
 
+
 ###############################
 ###############################
 # 
@@ -75,11 +115,3 @@ for inp in $( cat text-examples.txt )
 done
 
 
-
-############################
-############################
-# 
-# Bootstrap EMR
-# 
-############################
-############################

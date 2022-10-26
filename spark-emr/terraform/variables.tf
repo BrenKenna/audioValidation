@@ -80,11 +80,24 @@ variable "cluster-general" {
         bucketName = "spark-cluster-tf"
         bucketACL = "private"
         region = "eu-west-1"
-        key = "emr-key"
+        key = "emrKey"
         loggingUri = "s3://spark-cluster-tf/spark/"
     }
 }
 
+# Provider credentials
+variable "auth-tf" {
+    description = "Credentials provider"
+    type = object({
+        roleArn = string
+        sessionName = string
+    })
+
+    default = {
+        roleArn = "arn:aws:iam::986224559876:role/Custom-Ec2-Role"
+        sessionName = "Spark-Terraform"
+    }
+}
 
 # Instance types
 variable "cluster-instances" {
@@ -106,8 +119,8 @@ variable "cluster-instances" {
         headType = "m3.xlarge"
         workerType = "m4.large"
         taskType = "m1.xlarge"
-        headCount = 1
-        workerCount = 2
-        taskCount = 2
+        headCount = 1 # 3
+        workerCount = 3
+        taskCount = 3
     }
 }

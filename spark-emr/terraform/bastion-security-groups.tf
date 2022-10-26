@@ -14,7 +14,7 @@ resource "aws_security_group" "bastion-sg" {
     vpc_id = "${aws_vpc.clusterVPC.id}"
     revoke_rules_on_delete = true
     tags = {
-        name = "bastion-sg"
+        Name = "bastion-sg"
     }
 
     # Allow external ssh traffic
