@@ -13,7 +13,10 @@ resource "aws_internet_gateway" "igw-bastion" {
     tags = {
         Name = "${var.cluster-network.igw_name}"
     }
-    depends_on = [ aws_subnet.bastion_subnet, aws_subnet.cluster_subnet ]
+    depends_on = [
+        aws_subnet.bastion_subnet,
+        aws_subnet.cluster_subnet
+    ]
 }
 
 
@@ -28,4 +31,3 @@ resource "aws_nat_gateway" "nat-cluster" {
         Name = "nat-cluster"
     }
 }
-

@@ -74,6 +74,7 @@ variable "cluster-general" {
         region = string
         key = string
         loggingUri = string
+        amiDebug = string
     })
 
     default = {
@@ -82,6 +83,7 @@ variable "cluster-general" {
         region = "eu-west-1"
         key = "emrKey"
         loggingUri = "s3://spark-cluster-tf/spark/"
+        amiDebug = "ami-0d24695bc0dcf0d64"
     }
 }
 

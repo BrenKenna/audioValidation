@@ -75,7 +75,7 @@ resource "aws_network_acl_rule" "inbound-http-cluster" {
     egress = false
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "${var.cluster-network.cidrBlock}"
+    cidr_block = "0.0.0.9/0"
     from_port = 80
     to_port = 80
     depends_on = [ aws_network_acl.cluster-nacl ]
@@ -131,7 +131,7 @@ resource "aws_network_acl_rule" "inbound-ephem-cluster" {
     egress = false
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "${var.cluster-network.cidrBlock}"
+    cidr_block = "0.0.0.0/0"
     from_port = 1024
     to_port = 65535
     depends_on = [ aws_network_acl.cluster-nacl ]
@@ -164,7 +164,7 @@ resource "aws_network_acl_rule" "inbound-ping-cluster" {
     egress = false
     protocol = "icmp"
     rule_action = "allow"
-    cidr_block = "${var.cluster-network.cidrBlock}"
+    cidr_block = "0.0.0.0/0"
     from_port = -1
     to_port = -1
     icmp_type = -1
@@ -335,5 +335,44 @@ resource "aws_network_acl_rule" "outbound-ephem-bastion" {
     cidr_block = "0.0.0.0/0"
     from_port = 1024
     to_port = 65535
+    depends_on = [ aws_network_acl.bastion-nacl ]
+}
+
+
+############################
+############################
+#
+# Ping Tests
+# - Covers 4040-> 18080
+#
+############################
+############################
+
+
+# Allow in/out ping
+resource "aws_network_acl_rule" "inbound-ping-bastion" {
+    network_acl_id = aws_network_acl.bastion-nacl.id
+    rule_number = 104
+    egress = false
+    protocol = "icmp"
+    rule_action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = -1
+    to_port = -1
+    icmp_type = -1
+    icmp_code = -1
+    depends_on = [ aws_network_acl.bastion-nacl ]
+}
+resource "aws_network_acl_rule" "outbound-ping-bastion" {
+    network_acl_id = aws_network_acl.bastion-nacl.id
+    rule_number = 104
+    egress = true
+    protocol = "icmp"
+    rule_action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = -1
+    to_port = -1
+    icmp_type = -1
+    icmp_code = -1
     depends_on = [ aws_network_acl.bastion-nacl ]
 }
