@@ -138,7 +138,7 @@ done
 # 
 # a). Debug Internet Access
 #  => Cluster spin-up >1hr
-#  => Should be 15-20mins
+#  => Should be 15-25 mins
 #  => Emphemeral In & Out anywhere
 # 
 ######################################
