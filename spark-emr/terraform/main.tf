@@ -35,6 +35,7 @@ resource "aws_emr_cluster" "spark-cluster" {
         name = "emr-tf-cluster"
         role = "EMR_DefaultRole"
     }
+    ebs_root_volume_size = 40
 
     # Configure ec2 instance network, keys, auth & sec
     ec2_attributes {
@@ -95,5 +96,19 @@ resource "aws_emr_instance_group" "task_group" {
         size = "40"
         type = "gp2"
         volumes_per_instance = 1
+    }
+}
+
+
+# Bastion host
+resource "aws_instance" "bastion-server" {
+    ami = "${var.cluster-general.amiDebug}"
+    instance_type = "t3.large"
+    key_name = "${var.cluster-general.key}"
+    security_groups = [ "${aws_security_group.bastion-sg.id}" ]
+    associate_public_ip_address = true
+    subnet_id = "${aws_subnet.bastion_subnet.id}"
+    tags = {
+        Name = "bastion-server"
     }
 }

@@ -67,7 +67,7 @@ class AudioValComparator():
     
     # Read generator resource
     def readResource(self):
-        with resources.open_text("comparator", self.training) as file:
+        with resources.open_text("audioValidator.comparator.data", self.training) as file:
             data = json.load(file)
         file.close()
         return data

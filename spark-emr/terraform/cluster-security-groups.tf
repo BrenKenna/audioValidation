@@ -131,6 +131,7 @@ resource "aws_security_group" "service-access-sg" {
     lifecycle {
         ignore_changes = [ingress, egress]
     }
+    revoke_rules_on_delete = true
 
     ingress {
         from_port = 9443
@@ -177,6 +178,7 @@ resource "aws_security_group" "cluster-workernode-sg" {
     lifecycle {
         ignore_changes = [ingress, egress]
     }
+    revoke_rules_on_delete = true
  
     # Allow internal traffic, could be configured better
     ingress {

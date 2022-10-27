@@ -1,5 +1,5 @@
 # Bastion
-resource "aws_instance" "bastion-server" {
+resource "aws_instance" "debugging-bastion-server" {
     ami = "${var.cluster-general.amiDebug}"
     instance_type = "t3.large"
     key_name = "${var.cluster-general.key}"
@@ -13,7 +13,7 @@ resource "aws_instance" "bastion-server" {
 
 
 # Cluster
-resource "aws_instance" "cluster-server" {
+resource "aws_instance" "debugging-cluster-server" {
     ami = "${var.cluster-general.amiDebug}"
     instance_type = "t3.large"
     key_name = "${var.cluster-general.key}"

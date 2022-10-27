@@ -30,3 +30,9 @@ output "cluster-loggingBucket" {
     value = aws_emr_cluster.spark-cluster.log_uri
     description = "Logging Bucket"
 }
+
+# Bastion node
+output "bastionServerData" {
+    value = aws_instance.bastion-server.public_ip
+    description = "Public IP of bastion host"
+}
