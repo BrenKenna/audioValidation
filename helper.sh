@@ -308,8 +308,8 @@ ssh -i ~/.ssh/emrKey.pem ec2-user@3.252.250.8
 
 
 # Login to master
-scp -pi ~/.ssh/emrKey.pem ~/.ssh/emrKey.pem hadoop@192.168.2.44:~/.ssh/
-ssh -i ~/.ssh/emrKey.pem hadoop@192.168.2.140
+scp -pi ~/.ssh/emrKey.pem ~/.ssh/emrKey.pem hadoop@192.168.2.41:~/.ssh/
+ssh -i ~/.ssh/emrKey.pem hadoop@192.168.2.41
 
 
 # Install core packages
@@ -365,7 +365,6 @@ print(audioVal.data)
 
 '''
 
-
                       Track                            Track Name  Mean Played/s  Mean Not Played/s  ...  File Size MB    MB / s  Label  Notes / Tempo
 0                      Goat               generator/goat-java.wav       3.200000           8.800000  ...      0.133583  0.003817      1       0.000000
 1                Collection         generator/collection-java.wav       3.391304           8.608696  ...      0.262825  0.003865      1       0.000000
@@ -396,6 +395,32 @@ bash spinup-cluster.sh
 
 '''
 
+# Spunup fine and audioValidator works
+python -c '
+from audioValidator.comparator import comparator as avc
+audioVal = avc.AudioValComparator()
+audioVal.loadTrainingSet()
+print(audioVal.data)
+'
+
+
+# Works from pyspark too
+pyspark
+from audioValidator.comparator import comparator as avc
+audioVal = avc.AudioValComparator()
+audioVal.loadTrainingSet()
+
+'''
+
+
+[11 rows x 15 columns]
+>>> 
+'''
+
+# Kill cluster
+aws emr terminate-clusters \
+  --region "eu-west-1" \
+  --cluster-ids "j-3T6QL946RHU2E"
 
 
 #######################

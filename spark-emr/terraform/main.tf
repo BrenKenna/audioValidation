@@ -102,7 +102,7 @@ resource "aws_emr_instance_group" "task_group" {
     instance_count = var.cluster-instances.taskCount
     instance_type = "${var.cluster-instances.taskType}"
     name = "TF-EMR-Task-Group"
-    depends_on = [ aws_emr_cluster.spark-cluster ]
+    # depends_on = [ aws_emr_cluster.spark-cluster ]
     ebs_config {
         size = "40"
         type = "gp2"
