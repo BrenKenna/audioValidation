@@ -1,0 +1,16 @@
+WARNING: Running pip install with root privileges is generally not a good idea. Try `pip3 install --user` instead.
+WARNING: Running pip install with root privileges is generally not a good idea. Try `pip3 install --user` instead.
+  WARNING: The scripts f2py, f2py3 and f2py3.7 are installed in '/usr/local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script normalizer is installed in '/usr/local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The scripts fonttools, pyftmerge, pyftsubset and ttx are installed in '/usr/local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+WARNING: Running pip install with root privileges is generally not a good idea. Try `pip3 install --user` instead.
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ImportError: No module named librosa
+Cloning into 'audioValidation'...
+Traceback (most recent call last):
+  File "<string>", line 2, in <module>
+ImportError: No module named audioValidator.comparator

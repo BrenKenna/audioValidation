@@ -37,6 +37,17 @@ resource "aws_emr_cluster" "spark-cluster" {
     }
     ebs_root_volume_size = 40
 
+    bootstrap_action {
+        path = "s3://bk-group1/install-audio-val.sh"
+        /*
+        name = "runif"
+        args = [
+            "instance.isMaster=true",
+            "echo running on master node"
+        ]
+        */
+    }
+
     # Configure ec2 instance network, keys, auth & sec
     ec2_attributes {
         instance_profile = "${aws_iam_instance_profile.spark-emr-profile.arn}"

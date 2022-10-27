@@ -318,6 +318,8 @@ sudo pip3 install pysoundfile
 sudo pip3 install librosa matplotlib numpy pandas scikit-learn
 sudo pip3 install boto3
 
+python -c 'import librosa'
+
 
 """
 
@@ -338,10 +340,6 @@ Running setup.py install for audioread ... done
 """
 
 
-# Check
-python -c 'import librosa'
-
-
 # Install the audioValidator
 sudo yum install -y git
 git clone --recursive https://github.com/BrenKenna/audioValidation.git
@@ -357,22 +355,48 @@ sudo mv audioValidator/ /usr/lib/python3.7/site-packages/
 
 # Test imports: Can instantiate compartor
 # sudo su; cd /usr/lib/python3.7/site-packages/audioValidator/comparator
-python
+python -c '
 from audioValidator.comparator import comparator as avc
 audioVal = avc.AudioValComparator()
 audioVal.loadTrainingSet()
+print(audioVal.data)
+'
 
 
 '''
 
-Python 3.7.10 (default, Jun  3 2021, 00:02:01) 
-[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux
-Type "help", "copyright", "credits" or "license" for more information.
->>> from audioValidator.comparator import comparator
->>> audioVal = comparator.AudioValComparator()
->>> audioVal.loadTrainingSet()
+
+                      Track                            Track Name  Mean Played/s  Mean Not Played/s  ...  File Size MB    MB / s  Label  Notes / Tempo
+0                      Goat               generator/goat-java.wav       3.200000           8.800000  ...      0.133583  0.003817      1       0.000000
+1                Collection         generator/collection-java.wav       3.391304           8.608696  ...      0.262825  0.003865      1       0.000000
+2           Half-Compendium         generator/half-compendium.wav       1.020000          10.980000  ...     33.638714  0.336387      1       0.000000
+3                Compendium              generator/compendium.wav       1.320000          10.680000  ...     67.277388  0.672774      1       0.000000
+4               Wihing Well             examples/Wishing-Well.wav       1.100000          10.900000  ...      7.572258  0.063102      0       0.919510
+5                     Stomp                    examples/Stomp.wav       1.041667          10.958333  ...      7.437532  0.061979      0       1.064248
+6              Beat Goes on     examples/And-the-Beat-Goes-On.wav       0.925000          11.075000  ...     12.373756  0.103115      0       0.988009
+7                  Sir Duke                 examples/Sir-Duke.wav       0.875000          11.125000  ...      7.264542  0.060538      0       0.975238
+8               Wihing Well             examples/Wishing-Well.wav       1.100000          10.900000  ...      7.572258  0.063102      0       0.919510
+9         Give Me the Night        examples/Give-Me-The-Night.wav       0.941667          11.058333  ...      6.829273  0.056911      0       1.005811
+10  Thorns of Crimson Death  examples/Thorns-of-Crimson-Death.wav       1.183333          10.816667  ...     14.892889  0.124107      0       0.989170
+
+[11 rows x 15 columns]
 
 '''
+
+
+# Copy and add in boostrap script
+bash spinup-cluster.sh
+
+'''
+
+{
+    "ClusterId": "j-3T6QL946RHU2E", 
+    "ClusterArn": "arn:aws:elasticmapreduce:eu-west-1:986224559876:cluster/j-3T6QL946RHU2E"
+}
+
+'''
+
+
 
 #######################
 #######################
