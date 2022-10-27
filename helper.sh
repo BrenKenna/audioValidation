@@ -349,6 +349,11 @@ cd audioValidation
 rm -fr Figs/ spark-emr/ helper.sh README.md links.txt
 sudo mv audioValidator/ /usr/lib/python3.7/site-packages/
 
+#
+# Holding on to see installation ocurred
+# cd ~
+# rm -fr audioValidation/
+# 
 
 # Test imports: Can instantiate compartor
 # sudo su; cd /usr/lib/python3.7/site-packages/audioValidator/comparator
@@ -356,6 +361,7 @@ python
 from audioValidator.comparator import comparator as avc
 audioVal = avc.AudioValComparator()
 audioVal.loadTrainingSet()
+
 
 '''
 
