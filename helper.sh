@@ -221,6 +221,7 @@ Error: error waiting for EC2 NAT Gateway (nat-0e21891f82005a9b7) create: unexpec
 # Run again
 git clone --recursive https://github.com/BrenKenna/audioValidation.git
 cd ~/audioValidation/spark-emr/terraform
+mv main-internet-debug.tf old-main-internet-debug.txt
 terraform init
 terraform plan
 
@@ -303,13 +304,13 @@ head-node = "ip-192-168-2-231.eu-west-1.compute.internal"
 
 
 # Login to bastion
-scp -pi ~/.ssh/emrKey.pem ~/.ssh/emrKey.pem ec2-user@3.252.250.8:~/.ssh/
-ssh -i ~/.ssh/emrKey.pem ec2-user@3.252.250.8
+scp -pi ~/.ssh/emrKey.pem ~/.ssh/emrKey.pem ec2-user@52.50.126.212:~/.ssh/
+ssh -i ~/.ssh/emrKey.pem ec2-user@52.50.126.212
 
 
 # Login to master
-scp -pi ~/.ssh/emrKey.pem ~/.ssh/emrKey.pem hadoop@192.168.2.41:~/.ssh/
-ssh -i ~/.ssh/emrKey.pem hadoop@192.168.2.41
+scp -pi ~/.ssh/emrKey.pem ~/.ssh/emrKey.pem hadoop@192.168.2.146:~/.ssh/
+ssh -i ~/.ssh/emrKey.pem hadoop@192.168.2.146
 
 
 # Install core packages
@@ -505,3 +506,182 @@ done
 wc -l /etc/profile
 76 /etc/profile
 """
+
+
+
+################################
+################################
+# 
+# 2). Run app
+#
+#   a). Download
+#   b). Analyze
+#   c). Post
+# 
+################################
+################################
+
+
+# Install jq
+sudo yum install -y jq
+
+# List data fine
+aws s3 ls s3://band-cloud-audio-validation/real/
+
+'''
+
+2022-10-28 08:42:16   12974824 And-the-Beat-Goes-On.wav
+2022-10-28 08:42:16    6986226 Feel-So-Numb.wav
+2022-10-28 08:42:16    7161012 Give-Me-The-Night.wav
+2022-10-28 08:42:16    7714290 God-of-Thunder.wav
+
+'''
+
+
+# Test script
+mkdir examples/
+aws s3 cp s3://band-cloud-audio-validation/real/Tempest-Temper-Enlil-Enraged.wav examples/
+python /usr/lib/python3.7/site-packages/audioValidator/run-results-maker.py \
+  -s "examples/Tempest-Temper-Enlil-Enraged.wav" \
+  -n "Melechesh"
+cat Melechesh-results.json | jq '.'
+
+'''
+
+- Analyzer runs fine
+
+Proceeding with examples/Tempest-Temper-Enlil-Enraged.wav
+
+
+Reading audio signal & measuring tempo
+
+Separating haromic from percussive signal for chromagram analysis
+
+
+{
+  "Track": "Melechesh",
+  "Track Name": "examples/Tempest-Temper-Enlil-Enraged.wav",
+  "Mean Played/s": 1.7083333333333333,
+  "Mean Not Played/s": 10.291666666666666,
+  "Played Sum": 205,
+  "Not Played Sum": 1235,
+  "Played Size": 120,
+  "Length seconds": 120,
+  "Tempo": 123.046875,
+  "Wave Size": 2646000,
+  "Sampling Rate": 22050,
+  "File Size MB": 11.96605110168457,
+  "MB / s": 0.09971709251403808,
+  "Notes / Tempo": 1.666031746031746
+}
+
+'''
+
+
+# Test classifier
+python /usr/lib/python3.7/site-packages/audioValidator/run-comparator.py \
+  -s "examples/Tempest-Temper-Enlil-Enraged.wav" \
+  -n "Melechesh"
+ sed -e 's/^"//g' -e 's/"$//g' -e 's/\\//g' Melechesh-classification.json | jq '."0"'
+
+'''
+
+- Runs fine
+
+
+Proceeding with examples/Tempest-Temper-Enlil-Enraged.wav
+
+
+Reading audio signal & measuring tempo
+
+Separating haromic from percussive signal for chromagram analysis
+
+Analyzing results and summarizing for classifier
+
+
+Fetching training model
+
+Applying classifier
+
+
+Handling results
+
+Melechesh label = 0
+
+
+{
+  "Track": "Melechesh",
+  "Track Name": "examples/Tempest-Temper-Enlil-Enraged.wav",
+  "Mean Played/s": 1.7083333333,
+  "Mean Not Played/s": 10.2916666667,
+  "Played Sum": 205,
+  "Not Played Sum": 1235,
+  "Played Size": 120,
+  "Length seconds": 120,
+  "Tempo": 123.046875,
+  "Wave Size": 2646000,
+  "Sampling Rate": 22050,
+  "File Size MB": 11.9660511017,
+  "MB / s": 0.0997170925,
+  "Notes / Tempo": 1.666031746,
+  "Label": 0
+}
+
+'''
+
+
+#####################
+# 
+# b). Fetch Tracks
+# 
+#####################
+
+
+# Downlaod
+for track in $(aws s3 ls s3://band-cloud-audio-validation/real/ | awk '{ print $NF }' | sort -R | head -n 4)
+  do
+  aws s3 cp s3://band-cloud-audio-validation/real/${track} examples/
+done
+
+
+# Debug analyzing
+pyspark
+import os, sys, boto3
+import json
+import matplotlib.pyplot as plt
+import pandas as pd
+
+
+# Audio validator
+from audioValidator.generator import generator
+from audioValidator.results import results
+from audioValidator.comparator import comparator
+from audioValidator.utils import utils
+
+# Get spark session & context
+spark = SparkSession.builder.getOrCreate()
+sc = spark.sparkContext
+
+
+# s3 config
+bucket = "band-cloud-audio-validation"
+s3_client = boto3.client('s3')
+
+
+# Configure analysis list
+dataDir = '/home/hadoop/examples'
+toDo = []
+for track in os.listdir(dataDir):
+  trackName = track.replace('.wav', '')
+  toDo.append( (trackName, track) )
+
+
+
+# Options: foreach, map
+# outMap = list(map( utils.classifyAudioSignal_fromTuple, toDo ))
+toDo_spark = sc.parallelize(toDo)
+output = toDo_spark.map(utils.classifyAudioSignal_fromTuple).collect()
+
+
+
+response = s3_client.upload_file(file_name, bucket, object_name)

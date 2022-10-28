@@ -13,9 +13,9 @@ import pandas as pd
 
 
 # Audio validator modules
-from generator import generator
-from results import results
-from comparator import comparator
+from audioValidator.generator import generator
+from audioValidator.results import results
+from audioValidator.comparator import comparator
 
 
 # Generate mock audio signal

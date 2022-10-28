@@ -38,9 +38,9 @@ resource "aws_emr_cluster" "spark-cluster" {
     ebs_root_volume_size = 40
 
     bootstrap_action {
-        path = "s3://bk-group1/install-audio-val.sh"
+        path = "s3://band-cloud-audio-validation/cluster/install-audio-val.sh"
+        name = "Install-Audio-Validator"
         /*
-        name = "runif"
         args = [
             "instance.isMaster=true",
             "echo running on master node"

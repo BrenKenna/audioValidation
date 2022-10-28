@@ -11,3 +11,5 @@ collection-java.txt
 spark-emr.tar.gz
 .terraform*
 terraform.tfstate*
+data
+data/*
