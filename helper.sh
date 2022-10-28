@@ -518,8 +518,35 @@ wc -l /etc/profile
 #   b). Analyze
 #   c). Post
 # 
+# - Clusters to check
+#   j-1JHJFK4C24QPM, j-DHIV6JGGHIKY
+#   j-SUPT2CI91N4D, j-2ATIIN9RSTV47
+#   j-14591FGIPAMC5, j-1XHWODSTSREGC
+#
 ################################
 ################################
+
+
+# Check status
+aws emr describe-cluster \
+  --region "eu-west-1" \
+  --cluster "j-DHIV6JGGHIKY" \
+  --query "Cluster.Status"
+
+'''
+
+{
+    "Timeline": {
+        "ReadyDateTime": 1666953568.902, 
+        "CreationDateTime": 1666952656.129
+    }, 
+    "State": "WAITING", 
+    "StateChangeReason": {
+        "Message": "Cluster ready to run steps."
+    }
+}
+
+'''
 
 
 # Install jq
@@ -644,8 +671,23 @@ for track in $(aws s3 ls s3://band-cloud-audio-validation/real/ | awk '{ print $
 done
 
 
+#################
+
 # Debug analyzing
-pyspark
+pyspark --master 'local[1]'
+spark = SparkSession.builder.getOrCreate()
+sc = spark.context
+
+"""
+
+Using Python version 3.7.10 (default, Jun  3 2021 00:02:01)
+Spark context Web UI available at http://ip-192-168-2-119.eu-west-1.compute.internal:4040
+Spark context available as 'sc' (master = local[1], app id = local-1666953708214).
+SparkSession available as 'spark'.
+
+"""
+
+# Import modules
 import os, sys, boto3
 import json
 import matplotlib.pyplot as plt
@@ -658,10 +700,6 @@ from audioValidator.results import results
 from audioValidator.comparator import comparator
 from audioValidator.utils import utils
 
-# Get spark session & context
-spark = SparkSession.builder.getOrCreate()
-sc = spark.sparkContext
-
 
 # s3 config
 bucket = "band-cloud-audio-validation"
@@ -669,12 +707,11 @@ s3_client = boto3.client('s3')
 
 
 # Configure analysis list
-dataDir = '/home/hadoop/examples'
+dataDir = '/home/hadoop/examples/'
 toDo = []
 for track in os.listdir(dataDir):
   trackName = track.replace('.wav', '')
-  toDo.append( (trackName, track) )
-
+  toDo.append( (trackName, str(dataDir + track)) )
 
 
 # Options: foreach, map
@@ -683,5 +720,110 @@ toDo_spark = sc.parallelize(toDo)
 output = toDo_spark.map(utils.classifyAudioSignal_fromTuple).collect()
 
 
+# Print results
+print(json.dumps(
+    output,
+    indent = 2
+))
 
-response = s3_client.upload_file(file_name, bucket, object_name)
+'''
+
+[
+  {
+    "Track": "God-of-Thunder",
+    "Track Name": "/home/hadoop/examples/God-of-Thunder.wav",
+    "Mean Played/s": 1.1416666667,
+    "Mean Not Played/s": 10.8583333333,
+    "Played Sum": 137,
+    "Not Played Sum": 1303,
+    "Played Size": 120,
+    "Length seconds": 120,
+    "Tempo": 107.666015625,
+    "Wave Size": 2646000,
+    "Sampling Rate": 22050,
+    "File Size MB": 7.3569202423,
+    "MB / s": 0.0613076687,
+    "Notes / Tempo": 1.2724535147,
+    "Label": 0
+  },
+  {
+    "Track": "Feel-So-Numb",
+  ...
+  },
+  ...
+]
+
+'''
+
+
+# Run again: First was 0001
+pyspark --master 'yarn'
+
+"""
+
+
+Using Python version 3.7.10 (default, Jun  3 2021 00:02:01)
+Spark context Web UI available at http://ip-192-168-2-119.eu-west-1.compute.internal:4040
+Spark context available as 'sc' (master = yarn, app id = application_1666953345948_0002).
+SparkSession available as 'spark'.
+
+"""
+
+# Import modules
+import os, sys, boto3
+import json
+import matplotlib.pyplot as plt
+import pandas as pd
+
+
+# Audio validator
+from audioValidator.generator import generator
+from audioValidator.results import results
+from audioValidator.comparator import comparator
+from audioValidator.utils import utils
+
+
+# s3 config
+bucket = "band-cloud-audio-validation"
+s3_client = boto3.client('s3')
+
+
+# Configure analysis list
+dataDir = '/home/hadoop/examples/'
+toDo = []
+for track in os.listdir(dataDir):
+  trackName = track.replace('.wav', '')
+  toDo.append( (trackName, str(dataDir + track)) )
+
+
+# Options: foreach, map
+# outMap = list(map( utils.classifyAudioSignal_fromTuple, toDo ))
+toDo_spark = sc.parallelize(toDo)
+output = toDo_spark.map(utils.classifyAudioSignal_fromTuple).collect()
+
+"""
+
+RuntimeError: cannot cache function '__shear_dense': no locator available for file '/usr/local/lib/python3.7/site-packages/librosa/util/utils.py'
+
+
+"""
+
+
+# Print results
+print(json.dumps(
+    output,
+    indent = 2
+))
+
+
+
+data_df = spark.sparkContext.parallelize(make_data(1000000)).map(lambda x: Row(**x)).toDF()
+lookup_df = spark.sparkContext.parallelize(make_lookup(100)).map(lambda x: Row(**x)).toDF()
+
+spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
+joined_df = data_df.join(lookup_df, on=["val1", "val2"])
+joined_df.groupBy("id_lkp").sum("price").orderBy(desc("sum(price)")).show(100, False)
+
+# Broadcast Join Method
+joined_df = data_df.join(broadcast(lookup_df), on =["val1", "val2"])
+joined_df.groupBy("id_lkp").sum("price").orderBy(desc("sum(price)")).show(100, False)
