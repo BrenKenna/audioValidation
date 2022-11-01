@@ -824,7 +824,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-# Audio validator
+# Set numba cache dir before librosa import
+os.environ["NUMBA_CACHE_DIR"] = "/tmp/NUMBA_CACHE_DIR/"
 from audioValidator.generator import generator
 from audioValidator.results import results
 from audioValidator.comparator import comparator

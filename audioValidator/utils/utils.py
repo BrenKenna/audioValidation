@@ -15,12 +15,6 @@ import shutil
 s3Client = boto3.client('s3')
 
 
-# Handle numba cache dire
-#  https://github.com/numba/numba/issues/7883
-if 'PYSPARK_PYTHON' in os.environ:
-    os.environ["NUMBA_CACHE_DIR"] = "/tmp/NUMBA_CACHE_DIR/"
-    os.makedirs("/tmp/NUMBA_CACHE_DIR/", exist_ok = True)
-
 # Audio validator modules
 from audioValidator.generator import generator
 from audioValidator.results import results

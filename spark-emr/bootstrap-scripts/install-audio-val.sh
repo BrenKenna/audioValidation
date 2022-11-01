@@ -16,6 +16,14 @@ rm -fr Figs/ spark-emr/ helper.sh README.md links.txt
 sudo mv audioValidator/ /usr/lib/python3.7/site-packages/
 python --version
 pip3 --version
+
+
+#
+# Handle numba cache dire
+#  - Probably cause issues down the line
+#  https://github.com/numba/numba/issues/7883
+mkdir -m 777 /tmp/NUMBA_CACHE_DIR
+
 #
 # Holding on to see installation ocurred
 # cd ~
