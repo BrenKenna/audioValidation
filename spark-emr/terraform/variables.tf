@@ -82,7 +82,7 @@ variable "cluster-general" {
         bucketACL = "private"
         region = "eu-west-1"
         key = "emrKey"
-        loggingUri = "s3://spark-cluster-tf/spark/"
+        loggingUri = "s3://bk-spark-cluster-tf/spark/"
         amiDebug = "ami-0d24695bc0dcf0d64"
     }
 }

@@ -14,7 +14,7 @@ git clone --recursive https://github.com/BrenKenna/audioValidation.git
 cd audioValidation
 rm -fr Figs/ spark-emr/ helper.sh README.md links.txt
 sudo mv audioValidator/ /usr/lib/python3.7/site-packages/
-
+python --version
 #
 # Holding on to see installation ocurred
 # cd ~
