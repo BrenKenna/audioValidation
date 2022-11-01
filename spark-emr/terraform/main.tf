@@ -25,6 +25,7 @@ resource "aws_emr_cluster" "spark-cluster" {
     applications = [
         "Ganglia",
         "Spark",
+        "Livy",
         "Zeppelin",
         "Hive",
         "Hue"

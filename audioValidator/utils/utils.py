@@ -10,7 +10,16 @@ import os, sys, argparse
 import json
 import matplotlib.pyplot as plt
 import pandas as pd
+import boto3
+import shutil
+s3Client = boto3.client('s3')
 
+
+# Handle numba cache dire
+#  https://github.com/numba/numba/issues/7883
+if 'PYSPARK_PYTHON' in os.environ:
+    os.environ["NUMBA_CACHE_DIR"] = "/tmp/NUMBA_CACHE_DIR/"
+    os.makedirs("/tmp/NUMBA_CACHE_DIR/", exist_ok = True)
 
 # Audio validator modules
 from audioValidator.generator import generator
@@ -65,6 +74,21 @@ def resultsToJson(trackAna, outpath):
         json.dump(trackAna.results, outfile)
     outfile.close()
 
+
+# Get audio
+def getAudio(Bucket = None, Prefix = None, Key = None, Download = True, OutPath = None):
+
+    if Download == True and OutPath != None:
+        print(OutPath)
+        os.makedirs(os.path.dirname(OutPath), exist_ok = True)
+        s3Client.download_file(Bucket, Key, OutPath)
+        output = os.path.exists(OutPath)
+
+    else:
+        output = s3Client.get_object(Bucket = Bucket, Key = Key)
+
+    # Download path
+    return output
 
 
 # Fetch model
@@ -156,4 +180,36 @@ def classifyMockSignal_fromTuple(item):
         return -1
 
     else:
-        return classifyMockSignal(item[0], item[1]) 
+        return classifyMockSignal(item[0], item[1])
+
+
+# Download and classify
+def fetchAndClassify(bucket, key, outDir):
+
+    # Setup record
+    track = key.split('/')[-1]
+    trackName = track.replace('wav', '')
+    trackPath = str(outDir + "/" + track)
+
+    # Fetch track
+    getAudio(Bucket = bucket, Key = key, OutPath = trackPath)
+
+    # Run analyzer
+    item = (trackName, trackPath)
+    classifyAudioSignal_fromTuple(item)
+
+    # Remove file and tmp path
+    os.remove(trackPath)
+    shutil.rmtree(os.path.dirname(outDir))
+
+
+# Run fetch and classify
+def runFetchAndClassify(item):
+
+    # Handle optional arg
+    if len(item) > 3:
+        print("Error, malformed input")
+        return -1
+    
+    # Fetch and run
+    fetchAndClassify(item[0], item[1], item[2])

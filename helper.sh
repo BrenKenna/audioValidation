@@ -809,21 +809,47 @@ RuntimeError: cannot cache function '__shear_dense': no locator available for fi
 """
 
 
-# Print results
-print(json.dumps(
-    output,
-    indent = 2
-))
+#########################
+#########################
 
 
+# Run local pyspark session
+pyspark --master 'yarn'
 
-data_df = spark.sparkContext.parallelize(make_data(1000000)).map(lambda x: Row(**x)).toDF()
-lookup_df = spark.sparkContext.parallelize(make_lookup(100)).map(lambda x: Row(**x)).toDF()
 
-spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-joined_df = data_df.join(lookup_df, on=["val1", "val2"])
-joined_df.groupBy("id_lkp").sum("price").orderBy(desc("sum(price)")).show(100, False)
+# Import modules
+import os, sys, boto3, shutil
+import json
+import matplotlib.pyplot as plt
+import pandas as pd
 
-# Broadcast Join Method
-joined_df = data_df.join(broadcast(lookup_df), on =["val1", "val2"])
-joined_df.groupBy("id_lkp").sum("price").orderBy(desc("sum(price)")).show(100, False)
+
+# Audio validator
+from audioValidator.generator import generator
+from audioValidator.results import results
+from audioValidator.comparator import comparator
+from audioValidator.utils import utils
+
+
+# s3 config
+import boto3
+bucket = "band-cloud-audio-validation"
+prefix = "real/"
+s3_client = boto3.client('s3')
+response = s3_client.list_objects(Bucket = bucket, Prefix = prefix)
+
+
+# Setup work
+toDo = []
+for obj in response["Contents"]:
+  outPath = str('./' + os.path.dirname(obj['Key']) + "/" + os.path.basename(obj['Key']).replace('.wav', '') )
+  item = (bucket, obj['Key'], outPath)
+  toDo.append(item)
+
+
+# Run analysis
+# outMap = list(map( utils.runFetchAndClassify, toDo ))
+toDo_spark = sc.parallelize(toDo)
+output = toDo_spark.map(utils.runFetchAndClassify).collect()
+
+
