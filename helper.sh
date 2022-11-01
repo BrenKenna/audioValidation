@@ -935,3 +935,63 @@ Error deleting track data: ./real/Thorns-of-Crimson-Death/Thorns-of-Crimson-Deat
 Error deleting tree: ./real/Thorns-of-Crimson-Death
 
 """
+
+
+# Run N jobs
+date
+for i in $(seq 15)
+  do
+  nohup spark-submit --master yarn --deploy-mode cluster --py-files audioValidator.zip audioValidator-test-job.py &>> audio-job-${i}.txt &
+  sleep 3s
+  wc -l audio-job-${i}.txt
+done
+
+tail -n 3 audio-job*txt
+
+'''
+
+- 15 test = still crashes
+ => Tue  1 Nov 20:31:25 UTC 2022
+
+- 30 check with cluster monitoring
+ => YARN logs showing Cannot allocate memory after
+ => CPU Utilization for master ~88% & cannot login XD
+ => Some jobs that started before peak completed
+ => Others had various of collections of work done
+ => Others crashed during S3 download_file operation/extraction
+ => Apps around index 20 not submitted insufficient resources
+
+Tue  1 Nov 20:16:00 UTC 2022
+
+
+- 2/3 were done by Tue  1 Nov 20:13:42 UTC 2022
+ => Took a few mins for cluster monitoring to update
+ => Jobs got 6 containers, 3 got 1
+ => Avail memory ~30MB, load ~15%
+
+Tue  1 Nov 20:09:00 UTC 2022
+[1] 13739
+13 audio-job-1.txt
+[2] 14397
+13 audio-job-2.txt
+[3] 15749
+13 audio-job-3.txt
+
+
+==> audio-job-1.txt <==
+22/11/01 20:10:42 INFO Client: Application report for application_1667324961020_0009 (state: RUNNING)
+22/11/01 20:10:43 INFO Client: Application report for application_1667324961020_0009 (state: RUNNING)
+22/11/01 20:10:44 INFO Client: Application report for application_1667324961020_0009 (state: RUNNING)
+
+==> audio-job-2.txt <==
+22/11/01 20:10:42 INFO Client: Application report for application_1667324961020_0010 (state: RUNNING)
+22/11/01 20:10:43 INFO Client: Application report for application_1667324961020_0010 (state: RUNNING)
+22/11/01 20:10:44 INFO Client: Application report for application_1667324961020_0010 (state: RUNNING)
+
+==> audio-job-3.txt <==
+22/11/01 20:10:42 INFO Client: Application report for application_1667324961020_0011 (state: RUNNING)
+22/11/01 20:10:43 INFO Client: Application report for application_1667324961020_0011 (state: RUNNING)
+22/11/01 20:10:44 INFO Client: Application report for application_1667324961020_0011 (state: RUNNING)
+
+
+'''
