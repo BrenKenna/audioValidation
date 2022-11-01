@@ -852,5 +852,22 @@ for obj in response["Contents"]:
 # outMap = list(map( utils.runFetchAndClassify, toDo ))
 toDo_spark = sc.parallelize(toDo)
 output = toDo_spark.map(utils.runFetchAndClassify).collect()
+[ print(i["Track"] + " = " + str(i["Label"])) for i in output ]
 
+"""
+
+
+And-the-Beat-Goes-On = 0
+Feel-So-Numb = 0
+Give-Me-The-Night = 0
+God-of-Thunder = 0
+Grand-Gathas-of-Baal-Sin = 0
+Sir-Duke = 0
+Stomp = 0
+Superbeast = 0
+Tempest-Temper-Enlil-Enraged = 0
+Thorns-of-Crimson-Death = 0
+Wishing-Well = 0
+
+"""
 

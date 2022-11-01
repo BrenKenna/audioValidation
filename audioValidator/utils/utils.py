@@ -191,7 +191,7 @@ def fetchAndClassify(bucket, key, outDir):
 
     # Run analyzer
     item = (trackName, trackPath)
-    classifyAudioSignal_fromTuple(item)
+    output = classifyAudioSignal_fromTuple(item)
 
     # Remove file
     try: 
@@ -204,6 +204,9 @@ def fetchAndClassify(bucket, key, outDir):
         shutil.rmtree(os.path.dirname(outDir))
     except:
         print('\n\n\n\nError deleting tree: ' + outDir)
+    
+    # Return output
+    return output
 
 
 # Run fetch and classify
@@ -216,4 +219,4 @@ def runFetchAndClassify(item):
         return -1
     
     # Fetch and run
-    fetchAndClassify(item[0], item[1], item[2])
+    return fetchAndClassify(item[0], item[1], item[2])
