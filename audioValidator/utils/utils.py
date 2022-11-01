@@ -15,7 +15,8 @@ import shutil
 s3Client = boto3.client('s3')
 
 
-# Audio validator modules
+# Audio validator modules: /usr/lib/python3.7/site-packages/audioValidator/utils/utils.py
+os.environ["NUMBA_CACHE_DIR"] = "/tmp/NUMBA_CACHE_DIR/"
 from audioValidator.generator import generator
 from audioValidator.results import results
 from audioValidator.comparator import comparator
@@ -192,15 +193,24 @@ def fetchAndClassify(bucket, key, outDir):
     item = (trackName, trackPath)
     classifyAudioSignal_fromTuple(item)
 
-    # Remove file and tmp path
-    os.remove(trackPath)
-    shutil.rmtree(os.path.dirname(outDir))
+    # Remove file
+    try: 
+        os.remove(trackPath)
+    except:
+        print('\n\n\n\nError deleting track data: ' + trackPath)
+    
+    # Remove path
+    try:
+        shutil.rmtree(os.path.dirname(outDir))
+    except:
+        print('\n\n\n\nError deleting tree: ' + outDir)
 
 
 # Run fetch and classify
 def runFetchAndClassify(item):
 
     # Handle optional arg
+    os.environ["NUMBA_CACHE_DIR"] = "/tmp/NUMBA_CACHE_DIR/"
     if len(item) > 3:
         print("Error, malformed input")
         return -1

@@ -22,6 +22,7 @@ pip3 --version
 # Handle numba cache dire
 #  - Probably cause issues down the line
 #  https://github.com/numba/numba/issues/7883
+#  Alternative = https://github.com/librosa/librosa/issues/1013
 mkdir -m 777 /tmp/NUMBA_CACHE_DIR
 
 #
@@ -38,3 +39,4 @@ mkdir -m 777 /tmp/NUMBA_CACHE_DIR
 ## audioVal.loadTrainingSet()
 ## print(audioVal.data)
 # '
+
