@@ -871,3 +871,67 @@ Wishing-Well = 0
 
 """
 
+# Test submit
+zip -r audioValidator.zip /usr/lib/python3.7/site-packages/audioValidator
+spark-submit \
+   --master yarn \
+   --deploy-mode cluster \
+   --py-files audioValidator.zip \
+   audioValidator-test-job.py
+
+yarn logs -applicationId application_1667324961020_0008 | less
+
+
+"""
+
+- Worked ok-ish, ~3mins for all instead of ~30mins
+  => Some small things to comeback too like need for NUMBA cache dir with miniconda & friends
+  => Managing print statements etc
+  => yarn logs is deady handy in private subnet XD
+
+22/11/01 19:14:19 INFO ClientConfigurationFactory: Set initial getObject socket timeout to 2000 ms.
+
+22/11/01 19:17:23 INFO PythonRunner: Times: total = 183266, boot = 843, init = 6735, finish = 175688
+22/11/01 19:17:23 INFO Executor: Finished task 0.0 in stage 0.0 (TID 0). 3163 bytes result sent to driver
+
+
+- Seen in all containers, but doesn't crash tasks
+  => Not really used, comeback laterzzz
+
+Container: container_1667324961020_0008_01_000008 on ip-192-168-2-25.eu-west-1.compute.internal_8041
+LogAggregationType: AGGREGATED
+
+22/11/01 19:14:23 WARN ConfigurationUtils: Cannot create temp dir with proper permission: /mnt1/s3
+java.nio.file.AccessDeniedException: /mnt1
+
+And-the-Beat-Goes-On. = 0
+Feel-So-Numb. = 0
+Give-Me-The-Night. = 0
+God-of-Thunder. = 0
+Grand-Gathas-of-Baal-Sin. = 0
+Sir-Duke. = 0
+Stomp. = 0
+Superbeast. = 0
+Tempest-Temper-Enlil-Enraged. = 0
+Thorns-of-Crimson-Death. = 0
+Wishing-Well. = 0
+
+- Jobs still ran, print statements are mess (lazy coding)
+ => While there are errors for 
+
+./real/Sir-Duke/Sir-Duke.wav
+./real/And-the-Beat-Goes-On/And-the-Beat-Goes-On.wav
+./real/Stomp/Stomp.wav
+./real/Feel-So-Numb/Feel-So-Numb.wav
+./real/Give-Me-The-Night/Give-Me-The-Night.wav
+./real/Superbeast/Superbeast.wav
+./real/God-of-Thunder/God-of-Thunder.wav
+./real/Tempest-Temper-Enlil-Enraged/Tempest-Temper-Enlil-Enraged.wav
+./real/Grand-Gathas-of-Baal-Sin/Grand-Gathas-of-Baal-Sin.wav
+./real/Thorns-of-Crimson-Death/Thorns-of-Crimson-Death.wav
+
+
+Error deleting track data: ./real/Thorns-of-Crimson-Death/Thorns-of-Crimson-Death.wav
+Error deleting tree: ./real/Thorns-of-Crimson-Death
+
+"""
