@@ -995,3 +995,55 @@ Tue  1 Nov 20:09:00 UTC 2022
 
 
 '''
+
+
+
+#################################
+#################################
+# 
+# Test as Step
+# 
+#################################
+#################################
+
+
+# Submit
+aws emr add-steps \
+  --region "eu-west-1" \
+  --cluster-id "j-C2XUA2B9ZPJD" \
+  --steps file:///home/ec2-user/example-step.json
+
+# application_1667383378826_0001
+aws emr describe-step \
+  --region "eu-west-1" \
+  --cluster-id "j-C2XUA2B9ZPJD" \
+  --step-id "s-3APQ3DHWP0HNG" \
+  --query 'Step.Status'
+
+'''
+
+- Submits ok, crashes but do not get much from them
+  => Steps are a nice way to submit work onto a private cluster
+      => Logs, status etc accesible outside network
+      => Mega-plus if customer struggles with proxying requests to application servers
+      => Step logs from emr console cannot be refreshed
+  => Old aws-cli version does not have execution-role-arn arg
+  => Stays running after ~2mins
+
+{
+    "StepIds": [
+        "s-3APQ3DHWP0HNG"
+    ]
+}
+
+
+{
+    "Timeline": {
+        "CreationDateTime": 1667385130.135, 
+        "StartDateTime": 1667385161.445
+    }, 
+    "State": "RUNNING", 
+    "StateChangeReason": {}
+}
+
+'''

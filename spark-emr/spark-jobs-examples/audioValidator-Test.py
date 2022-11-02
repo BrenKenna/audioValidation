@@ -40,4 +40,10 @@ for obj in response["Contents"]:
 # outMap = list(map( utils.runFetchAndClassify, toDo ))
 toDo_spark = sc.parallelize(toDo)
 output = toDo_spark.map(utils.runFetchAndClassify).collect()
-[ print(i["Track"] + " = " + str(i["Label"])) for i in output ]
+
+
+# Pretty print results
+print(json.dumps(
+    output,
+    indent = 2
+))

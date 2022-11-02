@@ -183,7 +183,7 @@ def fetchAndClassify(bucket, key, outDir):
 
     # Setup record
     track = key.split('/')[-1]
-    trackName = track.replace('wav', '')
+    trackName = track.replace('.wav', '')
     trackPath = str(outDir + "/" + track)
 
     # Fetch track
