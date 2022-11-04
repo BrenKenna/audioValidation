@@ -2,7 +2,7 @@
 aws emr create-cluster \
   --region "eu-west-1" \
   --applications Name=Spark Name=Hive Name=Ganglia Name=Zeppelin Name=Hue Name=Livy \
-  --tags 'name=emr-tf-cluster' 'role=EMR_DefaultRole' \
+  --tags 'Name=Audio-Validation-Cluster' 'role=EMR_DefaultRole' \
   --bootstrap-actions Path="s3://band-cloud-audio-validation/cluster/install-audio-val.sh" \
   --scale-down-behavior TERMINATE_AT_TASK_COMPLETION \
   --ebs-root-volume-size 40 \
@@ -16,8 +16,8 @@ aws emr create-cluster \
       "AdditionalMasterSecurityGroups":[""]}' \
   --service-role "arn:aws:iam::986224559876:role/sparkClusterRole" \
   --release-label "emr-6.7.0" \
-  --log-uri 's3n://bk-spark-cluster-tf/spark/' \
-  --name 'EMR Terraform Cluster v2' \
+  --log-uri 's3://bk-spark-cluster-tf/spark/' \
+  --name 'Audio-Validation-Cluster' \
   --instance-groups '[
       { "InstanceCount":3,
         "EbsConfiguration":{

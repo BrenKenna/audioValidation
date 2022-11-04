@@ -1010,19 +1010,21 @@ Tue  1 Nov 20:09:00 UTC 2022
 # Submit
 aws emr add-steps \
   --region "eu-west-1" \
-  --cluster-id "j-C2XUA2B9ZPJD" \
+  --cluster-id "j-3NTNOBUMJUX8K" \
   --steps file:///home/ec2-user/example-step.json
+
+
 
 # application_1667383378826_0001
 aws emr describe-step \
   --region "eu-west-1" \
-  --cluster-id "j-C2XUA2B9ZPJD" \
-  --step-id "s-3APQ3DHWP0HNG" \
+  --cluster-id "j-3NTNOBUMJUX8K" \
+  --step-id "s-10B5DTTSDO9Z4" \
   --query 'Step.Status'
 
 '''
 
-- Submits ok, crashes but do not get much from them
+- Submitted & completed ok, stdout not available though
   => Steps are a nice way to submit work onto a private cluster
       => Logs, status etc accesible outside network
       => Mega-plus if customer struggles with proxying requests to application servers
@@ -1045,5 +1047,30 @@ aws emr describe-step \
     "State": "RUNNING", 
     "StateChangeReason": {}
 }
+
+'''
+
+
+# Submit a few
+for i in $(seq 10)
+  do
+  aws emr add-steps --region "eu-west-1" --cluster-id "j-3NTNOBUMJUX8K" --steps file:///home/ec2-user/example-step.json
+done
+
+'''
+
+- 5 was fine, trying 10
+
+Does indeed hault, but not so much to bring the head nodeq down
+  => Free memory falls to ~140MB
+
+WARN YarnClusterScheduler: Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and ha
+ve sufficient resources
+
+
+free -m
+              total        used        free      shared  buff/cache   available
+Mem:          15029       11548         139           0        3341        3164
+Swap:             0           0           0
 
 '''
