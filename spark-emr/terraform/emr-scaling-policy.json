@@ -1,0 +1,95 @@
+{
+    "Constraints": { 
+          "MaxCapacity": 20,
+          "MinCapacity": 3
+       },
+       "Rules": [ 
+          { 
+             "Action": { 
+                "SimpleScalingPolicyConfiguration": { 
+                   "AdjustmentType": "CHANGE_IN_CAPACITY",
+                   "CoolDown": 35,
+                   "ScalingAdjustment": 5
+                }
+             },
+             "Description": "Scale-out based on YARN memory",
+             "Name": "Scale-Out_YARN_MEM",
+             "Trigger": { 
+                "CloudWatchAlarmDefinition": { 
+                   "ComparisonOperator": "LESS_THAN",
+                   "Dimensions": [ 
+                      { 
+                         "Key": "JobFlowId",
+                         "Value": "${emr.clusterID}"
+                      }
+                   ],
+                   "EvaluationPeriods": 1,
+                   "MetricName": "YARNMemoryAvailablePrecentage",
+                   "Namespace": "AWS/ElasticMapReduce",
+                   "Period": 60,
+                   "Statistic": "AVERAGE",
+                   "Threshold": 45,
+                   "Unit": "PERCENT"
+                }
+             }
+          },
+          { 
+            "Action": { 
+               "SimpleScalingPolicyConfiguration": { 
+                  "AdjustmentType": "CHANGE_IN_CAPACITY",
+                  "CoolDown": 35,
+                  "ScalingAdjustment": -5
+               }
+            },
+            "Description": "Scale-in based on AppsRunning",
+            "Name": "Scale-In_AppsRunning",
+            "Trigger": { 
+               "CloudWatchAlarmDefinition": { 
+                  "ComparisonOperator": "LESS_THAN",
+                  "Dimensions": [ 
+                     { 
+                        "Key": "JobFlowId",
+                        "Value": "${emr.clusterID}"
+                     }
+                  ],
+                  "EvaluationPeriods": 1,
+                  "MetricName": "AppsRunning",
+                  "Namespace": "AWS/ElasticMapReduce",
+                  "Period": 60,
+                  "Statistic": "AVERAGE",
+                  "Threshold": 10,
+                  "Unit": "COUNT"
+               }
+            }
+         },
+         { 
+            "Action": { 
+               "SimpleScalingPolicyConfiguration": { 
+                  "AdjustmentType": "CHANGE_IN_CAPACITY",
+                  "CoolDown": 35,
+                  "ScalingAdjustment": 5
+               }
+            },
+            "Description": "Scale-out based on AvailableMemory",
+            "Name": "Scale-Out_AvailableMemory",
+            "Trigger": { 
+               "CloudWatchAlarmDefinition": { 
+                  "ComparisonOperator": "LESS_THAN",
+                  "Dimensions": [ 
+                     { 
+                        "Key": "JobFlowId",
+                        "Value": "${emr.clusterID}"
+                     }
+                  ],
+                  "EvaluationPeriods": 1,
+                  "MetricName": "AvailableMemory",
+                  "Namespace": "AWS/ElasticMapReduce",
+                  "Period": 60,
+                  "Statistic": "AVERAGE",
+                  "Threshold": 1000,
+                  "Unit": "COUNT"
+               }
+            }
+         }
+       ]
+ }

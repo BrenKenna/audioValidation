@@ -25,6 +25,7 @@ yum -y install terraform
 
 # Fetch repo
 git clone --recursive https://github.com/BrenKenna/audioValidation.git
+aws iam delete-instance-profile --region "eu-west-1" --instance-profile-name "spark-emr-profile"
 
 
 # Create image with Tf, git & repo

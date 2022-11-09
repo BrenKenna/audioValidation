@@ -83,7 +83,7 @@ variable "cluster-general" {
         region = "eu-west-1"
         key = "emrKey"
         loggingUri = "s3://bk-spark-cluster-tf/spark/"
-        amiDebug = "ami-0d24695bc0dcf0d64"
+        amiDebug = "ami-02b8ac478978f208e"
     }
 }
 
@@ -118,9 +118,9 @@ variable "cluster-instances" {
     })
 
     default = {
-        headType = "m3.xlarge"
-        workerType = "m4.large"
-        taskType = "m1.xlarge"
+        headType = "c5a.16xlarge"
+        workerType = "m5.4xlarge"
+        taskType = "m5a.8xlarge"
         headCount = 1 # 3
         workerCount = 3
         taskCount = 3
