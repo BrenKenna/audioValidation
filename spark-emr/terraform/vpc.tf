@@ -28,7 +28,7 @@ resource "aws_vpc" "clusterVPC" {
 resource "aws_subnet" "bastion_subnet" {
     vpc_id = aws_vpc.clusterVPC.id
     cidr_block = var.cluster-network.az1_subnets.bastionCidrBlock
-    availability_zone = var.cluster-network.az1_subnets.availZone
+    availability_zone = "eu-west-1b"
     map_public_ip_on_launch = true
     tags = {
         Name = "bastion-subnet"

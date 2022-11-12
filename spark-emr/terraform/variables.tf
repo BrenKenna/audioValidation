@@ -83,7 +83,7 @@ variable "cluster-general" {
         region = "eu-west-1"
         key = "emrKey"
         loggingUri = "s3://bk-spark-cluster-tf/spark/"
-        amiDebug = "ami-02b8ac478978f208e"
+        amiDebug = "ami-05890c70635a7423c"
     }
 }
 

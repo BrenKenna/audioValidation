@@ -28,6 +28,7 @@ resource "aws_emr_cluster" "spark-cluster" {
         "Livy",
         "Zeppelin",
         "Hive",
+        "Sqoop",
         "Hue"
     ]
     service_role = "${aws_iam_role.sparkClusterRole.arn}"
@@ -53,10 +54,9 @@ resource "aws_emr_cluster" "spark-cluster" {
     ec2_attributes {
         instance_profile = "${aws_iam_instance_profile.spark-emr-profile.arn}"
         key_name = "${var.cluster-general.key}"
-        subnet_id = "${aws_subnet.cluster_subnet.id}"
+        subnet_id = "${aws_subnet.bastion_subnet.id}"
         emr_managed_master_security_group = "${aws_security_group.cluster-headnode-sg.id}"
         emr_managed_slave_security_group = "${aws_security_group.cluster-workernode-sg.id}"
-        service_access_security_group = "${aws_security_group.service-access-sg.id}"
     }
  
     # Configure head instance(s

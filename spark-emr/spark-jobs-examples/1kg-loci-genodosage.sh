@@ -253,3 +253,76 @@ regionalGroupDose_RDD.count()
 
 '''
 
+
+#################################################
+#################################################
+# 
+# Submit Steps
+# 
+#################################################
+#################################################
+
+# Copy scripts
+aws s3 cp lociDosages-etl-step.py s3://band-cloud-audio-validation/app/genoDoses/
+aws s3 cp step-generator.sh s3://band-cloud-audio-validation/app/genoDoses/
+
+# Setup job args
+chroms=$(seq 24 | sed 's/^/chr/' | xargs)
+dataBucket="s3://aws-roda-hcls-datalake/thousandgenomes_dragen/var_nested"
+chrom="chr21"
+partKey="chrom=chr21"
+dataDir="${dataBucket}/${partKey}"
+
+# Spark submit
+jobScript="s3://band-cloud-audio-validation/app/genoDoses/lociDosages-etl-step.py"
+data="s3://aws-roda-hcls-datalake/thousandgenomes_dragen/var_nested/chrom=chr21/20210721_220854_00027_s6m5m_030a4aea-0e7f-4970-a614-035403b2f2a1"
+jobKey=1
+spark-submit \
+  --master yarn \
+  --deploy-mode cluster \
+  ${jobScript} \
+    "--data=${data} --jobKey=${jobKey}"
+   
+
+
+# Create & submit steps for jobs
+jobDir="1KG-Dosages"
+jobScript="s3://band-cloud-audio-validation/app/genoDoses/lociDosages-etl-step.py"
+for i in $(aws s3 ls ${dataDir}/ | awk '{ print NR","$NF }')
+  do
+  jobKey=$(echo $i | cut -d , -f 1)
+  db=$(echo $i | cut -d , -f 2)
+  bash step-generator.sh "$jobDir" "${chrom}-$jobKey" "$jobScript" "--data=${dataDir}/${db}" "--jobKey=$jobKey"
+done 
+
+
+# Submit: dropped type custom jar + script-runner, left with spark
+clusterID="j-3VX7VPSRK5P3I"
+aws emr add-steps \
+  --region "eu-west-1" \
+  --cluster-id "$clusterID" \
+  --steps file:///home/ec2-user/1KG-Dosages/chr21-3.json
+
+
+aws emr list-steps \
+  --region "eu-west-1" \
+  --cluster-id "$clusterID" \
+  --step-ids "s-23JI3DAKA5OCG" "s-17QJGN7LQ8PAI" "s-P8WE5EV8PEE3" \
+  --query "Steps[*].Status"
+
+
+'''
+
+- Steps 1->3
+
+s-1FGXI0FVEYC4N, s-1R54VKKNLOWHV, s-2QK2CN9KJCT37
+
+
+- Due to how the step is written
+"Message": "Exception in thread \"main\" org.apache.spark.SparkException: Failed to get main class in JAR with error 'File file:/mnt/var/lib/hadoop/steps/s-H5TZFVU1JKCE/s3:/band-cloud-audio-validation/app/genoDoses/lociDosages-etl-step.py, s3:/aws-roda-hcls-datalake/thousandgenomes_dragen/var_nested/chrom=chr21/20210721_220854_00027_s6m5m_030a4aea-0e7f-4970-a614-035403b2f2a1 does not exist'.  Please specify one with --class."
+
+
+- Running as below worked fine
+  "script", "--data=XX", "--jobKey=YY" 
+
+'''
