@@ -308,8 +308,10 @@ aws emr list-steps \
   --region "eu-west-1" \
   --cluster-id "$clusterID" \
   --step-ids "s-23JI3DAKA5OCG" "s-17QJGN7LQ8PAI" "s-P8WE5EV8PEE3" \
-  --query "Steps[*].Status"
+  --query "Steps[*].Status.State"
 
+
+aws s3 ls s3://band-cloud-audio-validation/1kg-genoDose-ETL/chrom=chr21/
 
 '''
 
@@ -322,7 +324,19 @@ s-1FGXI0FVEYC4N, s-1R54VKKNLOWHV, s-2QK2CN9KJCT37
 "Message": "Exception in thread \"main\" org.apache.spark.SparkException: Failed to get main class in JAR with error 'File file:/mnt/var/lib/hadoop/steps/s-H5TZFVU1JKCE/s3:/band-cloud-audio-validation/app/genoDoses/lociDosages-etl-step.py, s3:/aws-roda-hcls-datalake/thousandgenomes_dragen/var_nested/chrom=chr21/20210721_220854_00027_s6m5m_030a4aea-0e7f-4970-a614-035403b2f2a1 does not exist'.  Please specify one with --class."
 
 
-- Running as below worked fine
+- Running as below worked fine, RUNNING > 5mins
   "script", "--data=XX", "--jobKey=YY" 
 
+[
+    "COMPLETED", 
+    "COMPLETED", 
+    "COMPLETED"
+]
+
+- Data written
+
+                           PRE 20210721_220854_00027_s6m5m_030a4aea-0e7f-4970-a614-035403b2f2a1/
+                           PRE 20210721_220854_00027_s6m5m_07500d55-ef9a-435f-ac51-9930a26c4557/
+                           PRE 20210721_220854_00027_s6m5m_08924ac8-37a0-4173-bd2c-4e35df52bb3a/
+                           PRE 20210721_220854_00027_s6m5m_fab42b02-6a3b-4c6c-9bf2-2a3da032fa01/
 '''
