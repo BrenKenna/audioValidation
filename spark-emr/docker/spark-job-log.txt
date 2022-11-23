@@ -1,0 +1,142 @@
+22/11/23 15:46:21 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+22/11/23 15:46:21 INFO RMProxy: Connecting to ResourceManager at ip-192-168-2-154.eu-west-1.compute.internal/192.168.2.154:8032
+22/11/23 15:46:21 INFO AHSProxy: Connecting to Application History server at ip-192-168-2-154.eu-west-1.compute.internal/192.168.2.154:10200
+22/11/23 15:46:21 INFO Configuration: resource-types.xml not found
+22/11/23 15:46:21 INFO ResourceUtils: Unable to find 'resource-types.xml'.
+22/11/23 15:46:21 INFO Client: Verifying our application has not requested more than the maximum memory capability of the cluster (12288 MB per container)
+22/11/23 15:46:21 INFO Client: Will allocate AM container, with 1408 MB memory including 384 MB overhead
+22/11/23 15:46:21 INFO Client: Setting up container launch context for our AM
+22/11/23 15:46:21 INFO Client: Setting up the launch environment for our AM container
+22/11/23 15:46:21 INFO Client: Preparing resources for our AM container
+22/11/23 15:46:21 WARN Client: Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+22/11/23 15:46:24 INFO Client: Uploading resource file:/mnt/tmp/spark-72bbfbed-edf2-4baf-a930-a08455a79d2c/__spark_libs__7460546518803080898.zip -> hdfs://ip-192-168-2-154.eu-west-1.compute.internal:8020/user/hadoop/.sparkStaging/application_1669217616031_0002/__spark_libs__7460546518803080898.zip
+22/11/23 15:46:26 INFO Client: Uploading resource file:/home/hadoop/audioValidator-Test.py -> hdfs://ip-192-168-2-154.eu-west-1.compute.internal:8020/user/hadoop/.sparkStaging/application_1669217616031_0002/audioValidator-Test.py
+22/11/23 15:46:26 INFO Client: Uploading resource file:/usr/lib/spark/python/lib/pyspark.zip -> hdfs://ip-192-168-2-154.eu-west-1.compute.internal:8020/user/hadoop/.sparkStaging/application_1669217616031_0002/pyspark.zip
+22/11/23 15:46:27 INFO Client: Uploading resource file:/usr/lib/spark/python/lib/py4j-0.10.9.5-src.zip -> hdfs://ip-192-168-2-154.eu-west-1.compute.internal:8020/user/hadoop/.sparkStaging/application_1669217616031_0002/py4j-0.10.9.5-src.zip
+22/11/23 15:46:27 INFO Client: Uploading resource file:/mnt/tmp/spark-72bbfbed-edf2-4baf-a930-a08455a79d2c/__spark_conf__4991814467331110882.zip -> hdfs://ip-192-168-2-154.eu-west-1.compute.internal:8020/user/hadoop/.sparkStaging/application_1669217616031_0002/__spark_conf__.zip
+22/11/23 15:46:28 INFO SecurityManager: Changing view acls to: hadoop
+22/11/23 15:46:28 INFO SecurityManager: Changing modify acls to: hadoop
+22/11/23 15:46:28 INFO SecurityManager: Changing view acls groups to: 
+22/11/23 15:46:28 INFO SecurityManager: Changing modify acls groups to: 
+22/11/23 15:46:28 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users  with view permissions: Set(hadoop); groups with view permissions: Set(); users  with modify permissions: Set(hadoop); groups with modify permissions: Set()
+22/11/23 15:46:28 INFO HadoopDelegationTokenManager: Attempting to load user's ticket cache.
+22/11/23 15:46:28 INFO HadoopFSDelegationTokenProvider: getting token for: DFS[DFSClient[clientName=DFSClient_NONMAPREDUCE_891025862_1, ugi=hadoop/ip-192-168-2-143.eu-west-1.compute.internal@bandcloud-validator.com (auth:KERBEROS)]] with renewer yarn/ip-192-168-2-154.eu-west-1.compute.internal@bandcloud-validator.com
+22/11/23 15:46:28 INFO DFSClient: Created token for hadoop: HDFS_DELEGATION_TOKEN owner=hadoop/ip-192-168-2-143.eu-west-1.compute.internal@bandcloud-validator.com, renewer=yarn, realUser=, issueDate=1669218388535, maxDate=1669823188535, sequenceNumber=1, masterKeyId=2 on 192.168.2.154:8020
+22/11/23 15:46:28 INFO KMSClientProvider: New token created: (Kind: kms-dt, Service: kms://http@ip-192-168-2-154.eu-west-1.compute.internal:9600/kms, Ident: (kms-dt owner=hadoop, renewer=yarn, realUser=, issueDate=1669218388764, maxDate=1669823188764, sequenceNumber=1, masterKeyId=2))
+22/11/23 15:46:28 INFO HadoopFSDelegationTokenProvider: getting token for: DFS[DFSClient[clientName=DFSClient_NONMAPREDUCE_891025862_1, ugi=hadoop/ip-192-168-2-143.eu-west-1.compute.internal@bandcloud-validator.com (auth:KERBEROS)]] with renewer hadoop/ip-192-168-2-143.eu-west-1.compute.internal@bandcloud-validator.com
+22/11/23 15:46:28 INFO DFSClient: Created token for hadoop: HDFS_DELEGATION_TOKEN owner=hadoop/ip-192-168-2-143.eu-west-1.compute.internal@bandcloud-validator.com, renewer=hadoop, realUser=, issueDate=1669218388832, maxDate=1669823188832, sequenceNumber=2, masterKeyId=2 on 192.168.2.154:8020
+22/11/23 15:46:28 INFO KMSClientProvider: New token created: (Kind: kms-dt, Service: kms://http@ip-192-168-2-154.eu-west-1.compute.internal:9600/kms, Ident: (kms-dt owner=hadoop, renewer=hadoop, realUser=, issueDate=1669218388864, maxDate=1669823188864, sequenceNumber=2, masterKeyId=2))
+22/11/23 15:46:28 INFO HadoopFSDelegationTokenProvider: Renewal interval is 86400042 for token HDFS_DELEGATION_TOKEN
+22/11/23 15:46:28 INFO HadoopFSDelegationTokenProvider: Renewal interval is 86400047 for token kms-dt
+22/11/23 15:46:30 INFO HiveConf: Found configuration file null
+22/11/23 15:46:30 INFO Client: Submitting application application_1669217616031_0002 to ResourceManager
+22/11/23 15:46:30 INFO TimelineClientImpl: Timeline service address: ip-192-168-2-154.eu-west-1.compute.internal:8188
+22/11/23 15:46:31 INFO YarnClientImpl: Submitted application application_1669217616031_0002
+22/11/23 15:46:32 INFO Client: Application report for application_1669217616031_0002 (state: ACCEPTED)
+22/11/23 15:46:32 INFO Client: 
+         client token: Token { kind: YARN_CLIENT_TOKEN, service:  }
+         diagnostics: AM container is launched, waiting for AM container to Register with RM
+         ApplicationMaster host: N/A
+         ApplicationMaster RPC port: -1
+         queue: default
+         start time: 1669218390462
+         final status: UNDEFINED
+         tracking URL: http://ip-192-168-2-154.eu-west-1.compute.internal:20888/proxy/application_1669217616031_0002/
+         user: hadoop
+22/11/23 15:46:33 INFO Client: Application report for application_1669217616031_0002 (state: ACCEPTED)
+22/11/23 15:46:34 INFO Client: Application report for application_1669217616031_0002 (state: ACCEPTED)
+22/11/23 15:46:35 INFO Client: Application report for application_1669217616031_0002 (state: ACCEPTED)
+22/11/23 15:46:36 INFO Client: Application report for application_1669217616031_0002 (state: ACCEPTED)
+22/11/23 15:46:37 INFO Client: Application report for application_1669217616031_0002 (state: ACCEPTED)
+22/11/23 15:46:38 INFO Client: Application report for application_1669217616031_0002 (state: ACCEPTED)
+22/11/23 15:46:39 INFO Client: Application report for application_1669217616031_0002 (state: ACCEPTED)
+22/11/23 15:46:40 INFO Client: Application report for application_1669217616031_0002 (state: ACCEPTED)
+22/11/23 15:46:41 INFO Client: Application report for application_1669217616031_0002 (state: ACCEPTED)
+22/11/23 15:46:42 INFO Client: Application report for application_1669217616031_0002 (state: FAILED)
+22/11/23 15:46:42 INFO Client: 
+         client token: N/A
+         diagnostics: Application application_1669217616031_0002 failed 2 times due to AM Container for appattempt_1669217616031_0002_000002 exited with  exitCode: 7
+Failing this attempt.Diagnostics: [2022-11-23 15:46:41.760]Exception from container-launch.
+Container id: container_1669217616031_0002_02_000001
+Exit code: 7
+Exception message: Launch container failed
+Shell error output: image: 986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation is not trusted.
+Disable mount volume for untrusted image
+image: 986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation is not trusted.
+Disable cap-add for untrusted image
+Docker capability disabled for untrusted image
+Unable to find image '986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation:latest' locally
+docker: Error response from daemon: Head "https://986224559876.dkr.ecr.eu-west-1.amazonaws.com/v2/audio-validation/manifests/latest": no basic auth credentials.
+See 'docker run --help'.
+
+Shell output: main : command provided 4
+main : run as user is hadoop
+main : requested yarn user is hadoop
+Creating script paths...
+Creating local dirs...
+Getting exit code file...
+Changing effective user to root...
+Wrote the exit code 7 to /mnt/yarn/nmPrivate/application_1669217616031_0002/container_1669217616031_0002_02_000001/container_1669217616031_0002_02_000001.pid.exitcode
+
+
+[2022-11-23 15:46:41.779]Container exited with a non-zero exit code 7. Last 4096 bytes of stderr.txt :
+
+
+[2022-11-23 15:46:41.780]Container exited with a non-zero exit code 7. Last 4096 bytes of stderr.txt :
+
+
+For more detailed output, check the application tracking page: http://ip-192-168-2-154.eu-west-1.compute.internal:8088/cluster/app/application_1669217616031_0002 Then click on links to logs of each attempt.
+. Failing the application.
+         ApplicationMaster host: N/A
+         ApplicationMaster RPC port: -1
+         queue: default
+         start time: 1669218390462
+         final status: FAILED
+         tracking URL: http://ip-192-168-2-154.eu-west-1.compute.internal:8088/cluster/app/application_1669217616031_0002
+         user: hadoop
+22/11/23 15:46:42 INFO Client: Deleted staging directory hdfs://ip-192-168-2-154.eu-west-1.compute.internal:8020/user/hadoop/.sparkStaging/application_1669217616031_0002
+22/11/23 15:46:42 ERROR Client: Application diagnostics message: Application application_1669217616031_0002 failed 2 times due to AM Container for appattempt_1669217616031_0002_000002 exited with  exitCode: 7
+Failing this attempt.Diagnostics: [2022-11-23 15:46:41.760]Exception from container-launch.
+Container id: container_1669217616031_0002_02_000001
+Exit code: 7
+Exception message: Launch container failed
+Shell error output: image: 986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation is not trusted.
+Disable mount volume for untrusted image
+image: 986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation is not trusted.
+Disable cap-add for untrusted image
+Docker capability disabled for untrusted image
+Unable to find image '986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation:latest' locally
+docker: Error response from daemon: Head "https://986224559876.dkr.ecr.eu-west-1.amazonaws.com/v2/audio-validation/manifests/latest": no basic auth credentials.
+See 'docker run --help'.
+
+Shell output: main : command provided 4
+main : run as user is hadoop
+main : requested yarn user is hadoop
+Creating script paths...
+Creating local dirs...
+Getting exit code file...
+Changing effective user to root...
+Wrote the exit code 7 to /mnt/yarn/nmPrivate/application_1669217616031_0002/container_1669217616031_0002_02_000001/container_1669217616031_0002_02_000001.pid.exitcode
+
+
+[2022-11-23 15:46:41.779]Container exited with a non-zero exit code 7. Last 4096 bytes of stderr.txt :
+
+
+[2022-11-23 15:46:41.780]Container exited with a non-zero exit code 7. Last 4096 bytes of stderr.txt :
+
+
+For more detailed output, check the application tracking page: http://ip-192-168-2-154.eu-west-1.compute.internal:8088/cluster/app/application_1669217616031_0002 Then click on links to logs of each attempt.
+. Failing the application.
+Exception in thread "main" org.apache.spark.SparkException: Application application_1669217616031_0002 finished with failed status
+        at org.apache.spark.deploy.yarn.Client.run(Client.scala:1354)
+        at org.apache.spark.deploy.yarn.YarnClusterApplication.start(Client.scala:1776)
+        at org.apache.spark.deploy.SparkSubmit.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:1006)
+        at org.apache.spark.deploy.SparkSubmit.doRunMain$1(SparkSubmit.scala:180)
+        at org.apache.spark.deploy.SparkSubmit.submit(SparkSubmit.scala:203)
+        at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:90)
+        at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:1095)
+        at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:1104)
+        at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+22/11/23 15:46:42 INFO ShutdownHookManager: Shutdown hook called
+22/11/23 15:46:42 INFO ShutdownHookManager: Deleting directory /mnt/tmp/spark-920b554a-e46a-4448-a023-8ceec9608a9a
+22/11/23 15:46:42 INFO ShutdownHookManager: Deleting directory /mnt/tmp/spark-72bbfbed-edf2-4baf-a930-a08455a79d2c
