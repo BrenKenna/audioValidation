@@ -29,6 +29,7 @@ resource "aws_emr_cluster" "spark-cluster" {
         "Zeppelin",
         "Hive",
         "Sqoop",
+        "Presto",
         "Hue"
     ]
     service_role = "${aws_iam_role.sparkClusterRole.arn}"
@@ -104,6 +105,20 @@ resource "aws_emr_instance_group" "task_group" {
     instance_count = var.cluster-instances.taskCount
     instance_type = "${var.cluster-instances.taskType}"
     name = "TF-EMR-Task-Group"
+    # depends_on = [ aws_emr_cluster.spark-cluster ]
+    ebs_config {
+        size = "40"
+        type = "gp2"
+        volumes_per_instance = 1
+    }
+}
+
+# Configure task group
+resource "aws_emr_instance_group" "task_groupB" {
+    cluster_id = "${aws_emr_cluster.spark-cluster.id}"
+    instance_count = var.cluster-instances.taskCount
+    instance_type = "${var.cluster-instances.taskType}"
+    name = "TF-EMR-Task-GroupB"
     # depends_on = [ aws_emr_cluster.spark-cluster ]
     ebs_config {
         size = "40"

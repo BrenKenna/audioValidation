@@ -1,0 +1,14 @@
+[
+    {
+      "Classification": "container-executor",
+      "Configurations": [
+          {
+              "Classification": "docker",
+              "Properties": {
+                  "docker.trusted.registries": "local,centos,986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation",
+                  "docker.privileged-containers.registries": "local,centos,986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation"
+              }
+          }
+      ]
+    }
+  ]
