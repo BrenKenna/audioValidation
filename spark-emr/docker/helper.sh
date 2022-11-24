@@ -5,7 +5,7 @@
 APP_REPO="986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation"
 sudo yum install -y docker
 sudo service docker start
-sudo usermod -a -G docker ec2-user
+sudo usermod -a -G docker hadoop
 
 
 # Configure audioVal img
@@ -13,13 +13,13 @@ mkdir audioVal-Docker && cd audioVal-Docker
 $(aws ecr get-login-password --region "eu-west-1" |\
     docker login --username AWS -p "${ECR_PASS}" "${APP_REPO}" )
 
-docker build --no-cache -t audio-validator .
-docker tag audio-validator:latest ${APP_REPO}:latest
-docker push ${APP_REPO}:latest
+sudo docker build --no-cache -t audio-validator .
+sudo docker tag audio-validator:latest ${APP_REPO}:latest
+sudo docker push ${APP_REPO}:latest
 
 
 # Debug build errors if needs be
-docker run -it audio-validator
+sudo docker run -it audio-validator
 
 '''
 
@@ -70,6 +70,7 @@ File file:/usr/lib/python3.7/site-packages/audioValidator/run-comparator.py does
 #
 # Fails on master & core node
 # DOCKER_CLIENT_CONFIG=hdfs:///user/hadoop/config.json <= is for auto auth not enabled
+# application_1669288897165_0001
 # 
 vi audioValidator-Test.py
 APP_REPO="986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation:latest"
@@ -80,7 +81,7 @@ spark-submit --master 'yarn' \
     --conf "spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE=docker" \
     --conf "yarn.nodemanager.runtime.linux.docker.ecr-auto-authentication.enabled=true" \
     --conf "spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=${APP_REPO}" \
-    audioValidator-Test.py
+    audioVal-Test.py
 
 
 
@@ -100,9 +101,10 @@ aws ecr get-login-password --region "eu-west-1" >> /dev/null
 aws ecr get-login-password --region "eu-west-1" | docker login --username AWS --pass-stdin "${APP_REPO}"
 docker run -it 986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation:latest
 
+ssh -i ~/.ssh/emrKey.pem hadoop@192.168.2.169 "sudo usermod -a -G docker hadoop"
 
 
-'''
+"""
 
 - Given below edited allowed actions as per doc, resolved below error
 https://docs.aws.amazon.com/AmazonECR/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonEC2ContainerRegistryReadOnly
@@ -116,8 +118,35 @@ User: arn:aws:sts::986224559876:assumed-role/EMR_EC2_DefaultRole/<Instance ID>is
 * because no identity-based policy allows the ecr:GetAuthorizationToken action
 
 
-- Tried running on core/task node
-   => They were misconfigured
+- Tried running on core/task node:
+   => They were misconfigured.
+   => Adding hadoop user to group allowed to run docker resolved.
+   => Testing out on cluster w/out kerberos after encountering Kerberos error:
+       => Cant get kerberos realm, cannot locate default realm
+       => Made realm during cluster creation, dont think that docker container can ping it
 
 docker: Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/create": dial unix /var/run/docker.sock: connect: permission denied.
-'''
+
+
+- Worked fine, just bug in app code & worked fine after fixing
+
+22/11/24 12:42:44 ERROR ApplicationMaster: User application exited with status 1
+22/11/24 12:42:44 INFO ApplicationMaster: Final app status: FAILED, exitCode: 13, (reason: User application exited with status 1)
+22/11/24 12:42:44 ERROR ApplicationMaster: Uncaught exception: 
+org.apache.spark.SparkException: Exception thrown in awaitResult: 
+
+['AudioValGenerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'json', 'librosa', 'np', 'plt', 'sf']
+
+"""
+
+
+# Scope out logs
+clustDir="s3://bk-spark-cluster-tf/spark/j-10DR8KE2VRO5I/node"
+clustMast="${clustDir}/i-0e77da9305f8f124f"
+appLogs="s3://bk-spark-cluster-tf/spark/j-10DR8KE2VRO5I/containers/application_1669292513789_0001"
+
+hdfs dfs -cat ${clustMast}/applications/spark/spark-history-server.out.gz | gzip -d - | less
+hdfs dfs -cat ${clustMast}/applications/hadoop-yarn/hadoop-yarn-resourcemanager-ip-192-168-2-185.out.gz | gzip -d - | less
+hdfs dfs -cat ${clustMast}/daemons/instance-state/instance-state.log-2022-11-24-12-30.gz | gzip -d - | less
+hdfs dfs -cat ${appLogs}/container_1669292513789_0001_01_000001/stdout.gz | gzip -d - | less
+yarn logs -applicationId application_1669292513789_0002 | less

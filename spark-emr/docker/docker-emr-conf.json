@@ -5,10 +5,19 @@
           {
               "Classification": "docker",
               "Properties": {
-                  "docker.trusted.registries": "local,centos,986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation",
-                  "docker.privileged-containers.registries": "local,centos,986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation"
+                  "docker.trusted.registries": "local,centos,986224559876.dkr.ecr.eu-west-1.amazonaws.com",
+                  "docker.privileged-containers.registries": "local,centos,986224559876.dkr.ecr.eu-west-1.amazonaws.com"
               }
           }
       ]
+    },
+    {
+       "Classification": "spark-defaults",
+       "Properties":{
+          "spark.executorEnv.YARN_CONTAINER_RUNTIME_TYPE": "docker",
+          "spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE": "docker",
+          "spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE": "986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation:latest",
+          "spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE": "986224559876.dkr.ecr.eu-west-1.amazonaws.com/audio-validation:latest"
+       }
     }
 ]

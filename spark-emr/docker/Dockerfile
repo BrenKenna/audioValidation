@@ -1,10 +1,11 @@
 # Amazon Linux as OS Layer
-FROM amazonlinux:latest
-
+# Spark & friends written in Java ;)
+# FROM amazonlinux:latest
+FROM amazoncorretto:8
 
 # Install librosa dependencies
 RUN yum update -y \
-    && yum install -y amazon-linux-extras gcc-c++ make git ls tar time hostname jq
+    && yum install -y yum-utils amazon-linux-extras gcc-c++ git ls tar time hostname jq
 RUN yum install -y libsndfile.x86_64 libsndfile-utils.x86_64 libsndfile-devel.x86_64 python3
 
 
