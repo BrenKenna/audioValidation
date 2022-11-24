@@ -6,7 +6,8 @@
               "Classification": "docker",
               "Properties": {
                   "docker.trusted.registries": "local,centos,986224559876.dkr.ecr.eu-west-1.amazonaws.com",
-                  "docker.privileged-containers.registries": "local,centos,986224559876.dkr.ecr.eu-west-1.amazonaws.com"
+                  "docker.privileged-containers.registries": "local,centos,986224559876.dkr.ecr.eu-west-1.amazonaws.com",
+                  "docker.allowed.ro-mounts": "/sys/fs/cgroup,/etc/passwd,/usr/lib,/usr/share,/etc/krb5.conf"
               }
           }
       ]
