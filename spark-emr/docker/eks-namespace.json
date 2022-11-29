@@ -1,0 +1,9 @@
+{
+    "id": "",
+    "type": "EKS",
+    "info": {
+        "eksInfo": {
+            "namespace": ""
+        }
+    }
+}

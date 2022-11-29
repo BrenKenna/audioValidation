@@ -326,3 +326,23 @@ spark-submit --master 'yarn' \
 
 
 """
+
+
+#######################################
+#######################################
+# 
+# EMR-EKS
+#  => What is the benefit?
+#
+# References:
+# https://docs.aws.amazon.com/emr/latest/EMR-on-EKS-DevelopmentGuide/virtual-cluster.html
+# 
+#######################################
+#######################################
+
+
+
+
+
+
+
