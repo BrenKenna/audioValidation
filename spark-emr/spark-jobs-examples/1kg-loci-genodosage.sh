@@ -269,8 +269,8 @@ aws s3 cp step-generator.sh s3://band-cloud-audio-validation/app/genoDoses/
 # Setup job args
 chroms=$(seq 24 | sed 's/^/chr/' | xargs)
 dataBucket="s3://aws-roda-hcls-datalake/thousandgenomes_dragen/var_nested"
-chrom="chr21"
-partKey="chrom=chr21"
+chrom="chr22"
+partKey="chrom=chr22"
 dataDir="${dataBucket}/${partKey}"
 
 # Spark submit
@@ -297,17 +297,17 @@ done
 
 
 # Submit: dropped type custom jar + script-runner, left with spark
-clusterID="j-3VX7VPSRK5P3I"
+clusterID="j-3UV5EK0Q2QRHS"
 aws emr add-steps \
   --region "eu-west-1" \
   --cluster-id "$clusterID" \
-  --steps file:///home/ec2-user/1KG-Dosages/chr21-3.json
+  --steps file:///home/hadoop/1KG-Dosages/chr22-2.json
 
 
 aws emr list-steps \
   --region "eu-west-1" \
   --cluster-id "$clusterID" \
-  --step-ids "s-23JI3DAKA5OCG" "s-17QJGN7LQ8PAI" "s-P8WE5EV8PEE3" \
+  --step-ids "s-WIUX78XGMRPP" "s-196NDHU6U5WE7" "s-37XO86B3W9NK4" \
   --query "Steps[*].Status.State"
 
 

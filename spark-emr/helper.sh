@@ -209,3 +209,85 @@ spark-submit --master yarn --deploy-mode cluster testing.py
     => Deploy an app at veritcal + horizontal scale
 
 """
+
+#################################################
+# 
+# Endpoint Tests
+# 
+#################################################
+
+
+# Spin up cluster with s3 endpoint
+bash spinup-cluster.sh
+
+'''
+{
+    "ClusterId": "j-WX5419AMREWO", 
+    "ClusterArn": "arn:aws:elasticmapreduce:eu-west-1:986224559876:cluster/j-WX5419AMREWO"
+}
+'''
+
+
+#
+#
+# Test distruptions to communication to KMS
+#  - InstanceId = i-04556a7553c662969
+#  - 192.168.2.163
+#
+curl -I https://www.amazon.co.uk
+
+'''
+HTTP/2 503 
+content-type: text/html
+content-length: 7053
+server: Server
+date: Thu, 01 Dec 2022 10:42:11 GMT
+x-amz-rid: W4DZHVY2WCAR43HAKHX7
+vary: Content-Type,Accept-Encoding,User-Agent
+strict-transport-security: max-age=47474747; includeSubDomains; preload
+x-cache: Error from cloudfront
+via: 1.1 145b7e87a6273078e52d178985ceaa5e.cloudfront.net (CloudFront)
+x-amz-cf-pop: DUB56-P1
+x-amz-cf-id: G980shePZXtubPa6IvwcPohSepsTIgpirGIbG3AU5hq_tdcakFE_OA==
+'''
+
+
+# List keys can access fine
+aws kms list-keys --region "eu-west-1" --query 'Keys[*].KeyId' | wc -l
+
+'''
+10
+'''
+
+# Added KMS endpoint with mis-configured SG
+aws kms list-keys \
+    --debug \
+    --region "eu-west-1" \
+    --query 'Keys[*].KeyId' | wc -l
+
+'''
+Connection hangs
+
+2022-12-01 10:59:51,859 - MainThread - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): kms.eu-west-1.amazonaws.com:443
+2022-12-01 11:00:51,919 - MainThread - botocore.endpoint - DEBUG - Exception received when sending HTTP request.
+2022-12-01 11:00:51,964 - MainThread - botocore.hooks - DEBUG - Event needs-retry.kms.ListKeys: calling handler <botocore.retryhandler.RetryHandler object at 0x7f7fb52619d0>
+2022-12-01 11:00:51,964 - MainThread - botocore.retryhandler - DEBUG - retry needed, retryable exception caught: Connect timeout on endpoint URL: "https://kms.eu-west-1.amazonaws.com/"
+
+'''
+
+
+# After allowing inbound HTTPs from master
+aws kms list-keys \
+    --debug \
+    --region "eu-west-1" \
+    --query 'Keys[*].KeyId' | wc -l
+
+"""
+
+2022-12-01 11:13:59,925 - MainThread - awscli.clidriver - DEBUG - Arguments entered to CLI: ['kms', 'list-keys', '--debug', '--region', 'eu-west-1', '--query', 'Keys[*].KeyId']
+2022-12-01 11:13:59,925 - MainThread - botocore.hooks - DEBUG - Event session-initialized: calling handler <function add_scalar_parsers at 0x7f26aed44550>
+2022-12-01 11:13:59,925 - MainThread - botocore.hooks - DEBUG - Event session-initialized: calling handler <function register_uri_param_handler at 0x7f26afc4acd0>
+2022-12-01 11:13:59,926 - MainThread - botocore.hooks - DEBUG - Event session-initialized: calling handler <function inject_assume_role_provider_cache at 0x7f26afbaf0d0>
+2022-12-01 11:13:59,927 - MainThread - botocore.hooks - DEBUG - Event session-initialized: calling handler <function attach_history_handler at 0x7f26af0c7950>
+
+"""

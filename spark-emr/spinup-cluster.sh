@@ -1,21 +1,20 @@
 
 aws emr create-cluster \
   --region "eu-west-1" \
-  --applications Name=Spark Name=Hive Name=Ganglia Name=Zeppelin Name=Hue Name=Livy \
+  --applications Name=Spark Name=Hadoop Name=Ganglia \
   --tags 'Name=BS-Package-Tester-Cluster-Fix' 'role=EMR_DefaultRole' \
-  --bootstrap-actions Path="s3://band-cloud-audio-validation/cluster/install-scenarioRep.sh" \
   --scale-down-behavior TERMINATE_AT_TASK_COMPLETION \
   --ebs-root-volume-size 40 \
   --ec2-attributes '{"KeyName":"emrKey",
       "AdditionalSlaveSecurityGroups":[""],
       "InstanceProfile":"arn:aws:iam::986224559876:instance-profile/spark-emr-profile",
-      "SubnetId":"subnet-0aa75b7838d570e14",
-      "EmrManagedSlaveSecurityGroup":"sg-0619575e7442b0175",
-      "EmrManagedMasterSecurityGroup":"sg-0ba58fe9e6975e460",
-      "ServiceAccessSecurityGroup":"sg-09191bc8746af02ab",
+      "SubnetId":"subnet-0bf323c8ee647dbad",
+      "EmrManagedSlaveSecurityGroup":"sg-05bd1390e47f1de2b",
+      "EmrManagedMasterSecurityGroup":"sg-0a43e1d7599a13865",
+      "ServiceAccessSecurityGroup":"sg-00db33ad0bf4d325c",
       "AdditionalMasterSecurityGroups":[""]}' \
   --service-role "arn:aws:iam::986224559876:role/sparkClusterRole" \
-  --release-label "emr-6.7.0" \
+  --release-label "emr-5.33.1" \
   --log-uri 's3://bk-spark-cluster-tf/spark/' \
   --name 'BS-Package-Tester-Cluster-Fix' \
   --instance-groups '[

@@ -86,7 +86,7 @@ resource "aws_network_acl_rule" "outbound-http-cluster" {
     egress = true
     protocol = "tcp"
     rule_action = "allow"
-    cidr_block = "0.0.0.9/0"
+    cidr_block = "0.0.0.0/0"
     from_port = 80
     to_port = 80
     depends_on = [ aws_network_acl.cluster-nacl ]
