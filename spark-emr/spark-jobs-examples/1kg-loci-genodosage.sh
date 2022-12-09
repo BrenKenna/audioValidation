@@ -86,10 +86,12 @@ regionsDF.createOrReplaceTempView('Loci')
 
 regionalBurden = spark.sql('''
 SELECT
-  Loci.StartLoci, Loci.EndLoci, SUM(GenotypeDose.genoSum) as LociDose,
-  COUNT(DISTINCT GenotypeDose.variant_id) as VariantCount, COUNT(DISTINCT GenotypeDose.id) as SampleCount
-FROM Loci
-INNER JOIN GenotypeDose 
+  Loci.StartLoci, Loci.EndLoci,
+  SUM(GenotypeDose.genoSum) as LociDose,
+  COUNT(DISTINCT GenotypeDose.variant_id) as VariantCount,
+  COUNT(DISTINCT GenotypeDose.id) as SampleCount
+FROM GenotypeDose
+INNER JOIN Loci 
   ON GenotypeDose.pos >= Loci.StartLoci AND GenotypeDose.pos <= Loci.EndLoci
 GROUP BY Loci.StartLoci, Loci.EndLoci
 ORDER BY Loci.StartLoci ASC
@@ -269,8 +271,8 @@ aws s3 cp step-generator.sh s3://band-cloud-audio-validation/app/genoDoses/
 # Setup job args
 chroms=$(seq 24 | sed 's/^/chr/' | xargs)
 dataBucket="s3://aws-roda-hcls-datalake/thousandgenomes_dragen/var_nested"
-chrom="chr22"
-partKey="chrom=chr22"
+chrom="chr19"
+partKey="chrom=chr19"
 dataDir="${dataBucket}/${partKey}"
 
 # Spark submit
@@ -297,11 +299,11 @@ done
 
 
 # Submit: dropped type custom jar + script-runner, left with spark
-clusterID="j-3UV5EK0Q2QRHS"
+clusterID="j-1ZP4UTFW7C279"
 aws emr add-steps \
   --region "eu-west-1" \
   --cluster-id "$clusterID" \
-  --steps file:///home/hadoop/1KG-Dosages/chr22-2.json
+  --steps file:///home/hadoop/1KG-Dosages/chr19-1.json
 
 
 aws emr list-steps \
@@ -339,4 +341,218 @@ s-1FGXI0FVEYC4N, s-1R54VKKNLOWHV, s-2QK2CN9KJCT37
                            PRE 20210721_220854_00027_s6m5m_07500d55-ef9a-435f-ac51-9930a26c4557/
                            PRE 20210721_220854_00027_s6m5m_08924ac8-37a0-4173-bd2c-4e35df52bb3a/
                            PRE 20210721_220854_00027_s6m5m_fab42b02-6a3b-4c6c-9bf2-2a3da032fa01/
+'''
+
+hadoop-yarn-resourcemanager.service
+
+
+#################################
+
+
+'''
+
+- Step log
+
+Failing this attempt.Diagnostics: [2022-12-08 13:03:02.233]Container killed on request. Exit code is 137
+
+- Container stdout
+
+Querying Loci Dose
+root
+ |-- StartLoci: integer (nullable = true)
+ |-- EndLoci: integer (nullable = true)
+ |-- VariantCount: long (nullable = false)
+ |-- SampleCount: long (nullable = false)
+ |-- LociDose: long (nullable = true)
+ |-- LociHetDose: long (nullable = true)
+ |-- LociHomDose: long (nullable = true)
+ |-- LociCNVDose: long (nullable = true)
+ |-- LociNullDose: long (nullable = true)
+
+
+#
+# java.lang.OutOfMemoryError: Java heap space
+# -XX:OnOutOfMemoryError="kill -9 %p"
+#   Executing /bin/sh -c "kill -9 1264"...
+
+- Container stderr
+
+22/12/08 13:01:45 INFO BlockManagerInfo: Removed broadcast_2_piece0 on ip-192-168-2-9.eu-west-1.compute.internal:41041 in memory (size: 25.2 KiB, free: 24.5 GiB)
+22/12/08 13:01:45 INFO TaskSetManager: Finished task 0.0 in stage 3.0 (TID 5) in 25375 ms on ip-192-168-2-124.eu-west-1.compute.internal (executor 9) (4/4)
+22/12/08 13:01:45 INFO YarnClusterScheduler: Removed TaskSet 3.0, whose tasks have all completed, from pool 
+22/12/08 13:01:45 INFO DAGScheduler: ResultStage 3 ($anonfun$withThreadLocalCaptured$1 at FutureTask.java:266) finished in 25.387 s
+22/12/08 13:01:45 INFO DAGScheduler: Job 2 is finished. Cancelling potential speculative or zombie tasks for this job
+22/12/08 13:01:45 INFO YarnClusterScheduler: Killing all running tasks in stage 3: Stage finished
+
+- Other container stdout
+
+Heap
+ PSYoungGen      total 691712K, used 538385K [0x00007f0630f00000, 0x00007f0663c80000, 0x00007f0a0d000000)
+  eden space 607232K, 88% used [0x00007f0630f00000,0x00007f0651cc45d8,0x00007f0656000000)
+  from space 84480K, 0% used [0x00007f065b280000,0x00007f065b280000,0x00007f0660500000)
+  to   space 84480K, 0% used [0x00007f0656000000,0x00007f0656000000,0x00007f065b280000)
+ ParOldGen       total 2128896K, used 31292K [0x00007efe78c00000, 0x00007efefab00000, 0x00007f0630f00000)
+  object space 2128896K, 1% used [0x00007efe78c00000,0x00007efe7aa8f378,0x00007efefab00000)
+ Metaspace       used 77211K, capacity 82935K, committed 82944K, reserved 83968K
+(END)
+
+
+- Other container stderr
+
+/12/08 13:02:06 WARN TransportChannelHandler: Exception in connection from ip-192-168-2-146.eu-west-1.compute.internal/192.168.2.146:41237
+java.io.IOException: Connection reset by peer
+22/12/08 13:02:06 ERROR TransportResponseHandler: Still have 1 requests outstanding when connection from ip-192-168-2-146.eu-west-1.compute.internal/192.168.2.146:
+41237 is closed
+22/12/08 13:02:06 WARN Executor: Issue communicating with driver in heartbeater
+org.apache.spark.SparkException: Exception thrown in awaitResult: 
+22/12/08 13:02:06 ERROR YarnCoarseGrainedExecutorBackend: Executor self-exiting due to : Driver ip-192-168-2-146.eu-west-1.compute.internal:41237 disassociated! Sh
+utting down.
+22/12/08 13:02:06 INFO YarnCoarseGrainedExecutorBackend: Driver from ip-192-168-2-146.eu-west-1.compute.internal:41237 disconnected during shutdown
+22/12/08 13:02:06 INFO MemoryStore: MemoryStore cleared
+22/12/08 13:02:06 INFO BlockManager: BlockManager stopped
+22/12/08 13:02:06 INFO ShutdownHookManager: Shutdown hook called
+
+'''
+
+
+
+# Create & submit steps for jobs
+clusterID="j-1ZP4UTFW7C279"
+jobDir="1KG-Dosages"
+jobScript="s3://band-cloud-audio-validation/app/genoDoses/lociDosages-etl-step.py"
+chroms=$(seq 24 | sed 's/^/chr/' | xargs)
+dataBucket="s3://aws-roda-hcls-datalake/thousandgenomes_dragen/var_nested"
+chrom="chr18"
+partKey="chrom=${chrom}"
+dataDir="${dataBucket}/${partKey}"
+
+for i in $(aws s3 ls ${dataDir}/ | awk '{ print NR","$NF }')
+  do
+  jobKey=$(echo $i | cut -d , -f 1)
+  db=$(echo $i | cut -d , -f 2)
+  bash step-generator.sh "$jobDir" "${chrom}-$jobKey" "$jobScript" \
+    "--data=${dataDir}/${db}" "--jobKey=$jobKey" \
+    "10g" "2" "5g" "1" "30"
+done 
+
+
+# Bit high on cores & mem
+for i in $(seq 13 25)
+  do
+  aws emr add-steps \
+    --region "eu-west-1" \
+    --cluster-id "$clusterID" \
+    --steps file:///home/hadoop/1KG-Dosages/chr18-${i}.json
+done
+
+aws emr list-steps \
+  --region "eu-west-1" \
+  --cluster-id "$clusterID" \
+  --step-ids "s-1P1EV00JFLQ3Z" "s-2KIMKJFRBWVR9" \
+  --query "Steps[*].Status"
+
+
+'''
+
+{
+    "StepIds": [
+        "s-3IC1YP23B5SJ5"
+    ]
+}
+
+
+22/12/08 13:39:05 WARN BlockManagerMasterEndpoint: Error trying to remove broadcast 15 from block manager BlockManagerId(76, ip-192-168-2-14.eu-we
+st-1.compute.internal, 38987, None)
+java.io.IOException: Failed to send RPC RPC 5412256041603634174 to /192.168.2.14:33462: io.netty.channel.StacklessClosedChannelException
+
+Caused by: io.netty.channel.StacklessClosedChannelException
+        at io.netty.channel.AbstractChannel$AbstractUnsafe.write(Object, ChannelPromise)(Unknown Source)
+22/12/08 13:39:05 WARN NettyRpcEnv: Ignored failure: java.io.IOException: Failed to send RPC RPC 5477778275273416466 to /192.168.2.124:57774: io.n
+etty.channel.StacklessClosedChannelException
+
+
+Container: container_1670502789040_0002_01_000001 on ip-192-168-2-245.eu-west-1.compute.internal_8041
+LogAggregationType: AGGREGATED
+
+End of LogType:stdout
+***********************************************************************
+
+Container: container_1670502789040_0002_01_000195 on ip-192-168-2-245.eu-west-1.compute.internal_8041
+LogAggregationType: AGGREGATED
+'''
+
+
+# Difference in enabling fair-sharing
+cd /etc/hadoop/conf
+cp yarn-site.xml backup.yarn-site.xml
+systemctl status hadoop-yarn-resourcemanager
+systemctl stop hadoop-yarn-resourcemanager
+systemctl start hadoop-yarn-resourcemanager
+
+
+cd /etc/spark/conf
+
+
+'''
+
+- Minimal config
+<property>
+  <name>yarn.resourcemanager.scheduler.class</name>
+  <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+</property>
+
+
+- Before stop
+
+● hadoop-yarn-resourcemanager.service - Hadoop resourcemanager
+   Loaded: loaded (/etc/systemd/system/hadoop-yarn-resourcemanager.service; enabled; vendor preset: disabled)
+   Active: active (running) since Thu 2022-12-08 12:33:08 UTC; 6h ago
+ Main PID: 32507 (java)
+    Tasks: 356
+   Memory: 1.8G
+   CGroup: /system.slice/hadoop-yarn-resourcemanager.service
+           └─32507 /etc/alternatives/jre/bin/java -Dproc_resourcemanager -Djava.net.preferIPv4Stack=true -server -XX:+ExitOnOutOfMemoryError -XX:+ExitOnOutOfMem...
+
+
+- Stopped
+● hadoop-yarn-resourcemanager.service - Hadoop resourcemanager
+   Loaded: loaded (/etc/systemd/system/hadoop-yarn-resourcemanager.service; enabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Thu 2022-12-08 18:38:10 UTC; 3s ago
+ Main PID: 32507 (code=exited, status=143)
+
+
+- Started
+
+● hadoop-yarn-resourcemanager.service - Hadoop resourcemanager
+   Loaded: loaded (/etc/systemd/system/hadoop-yarn-resourcemanager.service; enabled; vendor preset: disabled)
+   Active: active (running) since Thu 2022-12-08 18:39:00 UTC; 44s ago
+  Process: 38228 ExecStart=/etc/init.d/hadoop-yarn-resourcemanager start (code=exited, status=0/SUCCESS)
+ Main PID: 38415 (java)
+    Tasks: 340
+   Memory: 651.0M
+   CGroup: /system.slice/hadoop-yarn-resourcemanager.service
+           └─38415 /etc/alternatives/jre/bin/java -Dproc_resourcemanager -Djava.net.preferIPv4Stack=true -server -XX:+ExitOnOutOfMemoryError -XX:+ExitOnOutOfMem...
+
+
+- Memory & #Executors:
+    => 2.4x10^12 dimensional space every ~35 mins
+    => Each of the ~12 steps ~80M rows, and ~3k nested columns.
+    => Cluster has ~2TB Mem, ~500 vCPU.
+    => Throughout the process all ~9/12 (75%) steps were utilizing ~10% of cluster.
+    => 2 jobs finished way sooner than others (~17%)
+    => No run offs
+
+- Speculation did not offer much change:
+    => Introduced two types of run offs, maybe value is a little low?
+    => Occasionally 1 job would snatch all resources, but would finish quickly (8.3%).
+    => When this happens 2 jobs were delayed way later than others (~17%)
+
+- Reorganizing app code a little would be better than above:
+    => Checkpoints, have HDFS storage use it better
+
+- Broad point about approach still a common nice one:
+    => 2TB cluster packs quite a punch.
+    => N steps (chunks of genome) dealing out M windows (loci within dataset).
+    => Each step could iteratively analyze different categories/classes of data from the M windows.
+
 '''
