@@ -123,6 +123,6 @@ variable "cluster-instances" {
         taskType = "m5a.8xlarge"
         headCount = 1 # 3
         workerCount = 3
-        taskCount = 3
+        taskCount = 8
     }
 }

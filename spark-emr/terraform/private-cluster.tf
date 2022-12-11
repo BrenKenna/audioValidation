@@ -127,6 +127,19 @@ resource "aws_emr_instance_group" "task_groupB" {
     }
 }
 
+# Configure task group
+resource "aws_emr_instance_group" "task_groupC" {
+    cluster_id = "${aws_emr_cluster.spark-cluster.id}"
+    instance_count = 3
+    instance_type = "c5a.12xlarge"
+    name = "TF-EMR-Task-GroupC"
+    # depends_on = [ aws_emr_cluster.spark-cluster ]
+    ebs_config {
+        size = "40"
+        type = "gp2"
+        volumes_per_instance = 1
+    }
+}
 
 # Bastion host
 resource "aws_instance" "bastion-server" {

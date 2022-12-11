@@ -1,5 +1,6 @@
 # Import modules
 import os, sys, boto3, shutil
+from datetime import datetime
 import argparse
 import json
 import matplotlib.pyplot as plt
@@ -54,11 +55,13 @@ partID = os.path.basename(data)
 chrom = partKey.split('=')[-1]
 outName = str(partKey + '/' + partID)
 tableSuffix = str(chrom + '_' + str(jobKey))
+now = datetime.now().ctime()
 sys.stdout.write(
     '\n\nAnalyzing: ' + str(chrom) +
     '\nReading inputdata: "' + str(data) +
     '\nPartitionKey, ID: ' + str(partKey) + ", " + str(partID)  +
-    '"\nResults destined for = "' + str(outName) + '"\n\n'
+    '"\nResults destined for = "' + str(outName) +
+    '"\nStarted at: "' + now + '"\n\n'
 )
 
 ##############################################################
@@ -99,14 +102,18 @@ SELECT
     (acc, value) -> acc + value
   ) AS genoSum
 FROM ''' + gtExplodeTableName + '''
+ORDER BY pos ASC
 ;
-''')
+''').repartition(200).persist()
+sys.stdout.write('\n\nGene Exploder Repartition + Sort: ' + datetime.now().ctime() + ' \n')
 
-
-# Create regions: Create DF from 1k increments
+# Describe results
 dataSum = data.describe()
 dataSum.show() # Min = 5031637; Max = 46699951; Size = 41,668,314; #-5KB = 4166
+sys.stdout.write('\n\nGene Exploder Show Summary: ' + datetime.now().ctime() + ' \n')
 
+
+# Create regions
 minMax = dataSum.select(dataSum.pos).collect()[-2::]
 minLoci = int(minMax[0]['pos'])
 maxLoci = int(minMax[1]['pos'])
@@ -146,7 +153,11 @@ dataSchema = StructType([
   StructField("EndLoci", IntegerType(), True),
   StructField("LociSize", IntegerType(), True)
 ])
-regionsDF = spark.createDataFrame(dataRDD, schema = dataSchema)
+regionsDF = spark.createDataFrame(
+  dataRDD,
+  schema = dataSchema
+)
+sys.stdout.write('\n\nRDD from Regions: ' + datetime.now().ctime() + ' \n')
 
 
 ##############################################################
@@ -190,14 +201,20 @@ INNER JOIN ''' + genoTableName + '''
 GROUP BY ''' + lociTableName + '''.StartLoci, ''' + lociTableName + '''.EndLoci
 ORDER BY ''' + lociTableName + '''.StartLoci ASC
 ;
-''')
+''').persist()
+sys.stdout.write('\n\nPersist Final Results: ' + datetime.now().ctime() + ' \n')
 regionalGroupDose.printSchema()
 regionalGroupDose.describe([
   'VariantCount', 'SampleCount', 'LociDose', 'LociHetDose',
   'LociHomDose', 'LociCNVDose', 'LociNullDose'
 ]).show()
+sys.stdout.write('\n\nSummarize Final Results: ' + datetime.now().ctime() + ' \n')
+sampleLociSum.write.csv("s3://band-cloud-audio-validation/1kg-genoDose-ETL/csvs/site/" + jobKey + "/" + outName)
+sys.stdout.write('\n\nSite-CSV Write: ' + datetime.now().ctime() + ' \n')
+sampleLociSum.unpersist()
+sys.stdout.write('\n\nSite-CSV Clear: ' + datetime.now().ctime() + ' \n')
 regionalGroupDose.show(10)
-
+sys.stdout.write('\n\nResults Show 10: ' + datetime.now().ctime() + ' \n')
 
 #
 # Store results:
@@ -212,3 +229,8 @@ regionalGroupDose.write.parquet(
     tgtBucketPath,
     compression = "snappy"
 )
+sys.stdout.write('\n\nResults Write: ' + datetime.now().ctime() + ' \n')
+regionalGroupDose.write.csv("s3://band-cloud-audio-validation/1kg-genoDose-ETL/csvs/loci/"  + jobKey + "/" + outName)
+sys.stdout.write('\n\nResults Write CSV: ' + datetime.now().ctime() + ' \n')
+regionalGroupDose.unpersist()
+sys.stdout.write('\n\nResults Clear: ' + datetime.now().ctime() + ' \n')

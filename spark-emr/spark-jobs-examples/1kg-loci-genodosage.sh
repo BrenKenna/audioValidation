@@ -1,6 +1,10 @@
 ###########################
 # 
 # Run Dosage Calc
+# Initial Data = 60,220
+# Exploded = 9,119,966, 131 Partitions
+# Regions = 4166, 135 Partitions
+# Regional Burden = 3731, Partitions 125
 # 
 ###########################
 
@@ -26,20 +30,22 @@ SELECT
     (acc, value) -> acc + value
   ) AS genoSum
 FROM gtExplode;
-''')
+''').persist()
 
 
 # Create regions: Create DF from 1k increments
 dataSum = data.describe()
 dataSum.show() # Min = 5031637; Max = 46699951; Size = 41,668,314; #-5KB = 4166
 
-minLoci = 5031637
-maxLoci = 46699951
+minMax = dataSum.select(dataSum.pos).collect()[-2::]
+minLoci = int(minMax[0]['pos'])
+maxLoci = int(minMax[1]['pos'])
 size = (maxLoci - minLoci)
 sizeInc = 10000
 
+
 data = []
-startLoci = 5031637
+startLoci = int(minMax[0]['pos'])
 endLoci = (startLoci + sizeInc)
 iter = 0
 while (startLoci < maxLoci) and (endLoci < maxLoci):
@@ -96,10 +102,15 @@ INNER JOIN Loci
 GROUP BY Loci.StartLoci, Loci.EndLoci
 ORDER BY Loci.StartLoci ASC
 ;
-''')
+''').persist()
 regionalBurden.printSchema()
-regionalBurden.show(20)
+regionalBurden.show(10)
 
+sample = regionalBurden.sample(
+  fraction = 0.01
+)
+pdf = sample.toPandas()
+pdf.info()
 
 '''
 
@@ -172,7 +183,7 @@ INNER JOIN GenotypeDose
 GROUP BY Loci.StartLoci, Loci.EndLoci
 ORDER BY Loci.StartLoci ASC
 ;
-''')
+''').persist()
 regionalGroupDose.printSchema()
 regionalGroupDose.describe([
   'VariantCount', 'SampleCount', 'LociDose', 'LociHetDose',
@@ -254,6 +265,13 @@ regionalGroupDose_RDD.count()
 22/11/09 16:30:08 WARN MemoryStore: Not enough space to cache broadcast_38 in memory! (computed 1150.8 MiB so far)
 
 '''
+
+
+##################
+
+# Write others to csv
+sampleLociSum.write.csv("s3://band-cloud-audio-validation/1kg-genoDose/csvs/sampleLoci-sum.csv")
+regionalGroupDose.write.csv("s3://band-cloud-audio-validation/1kg-genoDose/csvs/regional-gene-dose.csv")
 
 
 #################################################
@@ -417,12 +435,12 @@ utting down.
 
 
 # Create & submit steps for jobs
-clusterID="j-1ZP4UTFW7C279"
+clusterID="j-SJZ0QUWQ6WLJ"
 jobDir="1KG-Dosages"
 jobScript="s3://band-cloud-audio-validation/app/genoDoses/lociDosages-etl-step.py"
 chroms=$(seq 24 | sed 's/^/chr/' | xargs)
 dataBucket="s3://aws-roda-hcls-datalake/thousandgenomes_dragen/var_nested"
-chrom="chr18"
+chrom="chr16"
 partKey="chrom=${chrom}"
 dataDir="${dataBucket}/${partKey}"
 
@@ -432,17 +450,17 @@ for i in $(aws s3 ls ${dataDir}/ | awk '{ print NR","$NF }')
   db=$(echo $i | cut -d , -f 2)
   bash step-generator.sh "$jobDir" "${chrom}-$jobKey" "$jobScript" \
     "--data=${dataDir}/${db}" "--jobKey=$jobKey" \
-    "10g" "2" "5g" "1" "30"
+    "10g" "2" "5g" "2" "30"
 done 
 
 
-# Bit high on cores & mem
-for i in $(seq 13 25)
+# Bit high on cores & mem <= for what is involved
+for i in $(seq 30)
   do
   aws emr add-steps \
     --region "eu-west-1" \
     --cluster-id "$clusterID" \
-    --steps file:///home/hadoop/1KG-Dosages/chr18-${i}.json
+    --steps file:///home/hadoop/1KG-Dosages/${chrom}-${i}.json
 done
 
 aws emr list-steps \
@@ -555,4 +573,38 @@ cd /etc/spark/conf
     => N steps (chunks of genome) dealing out M windows (loci within dataset).
     => Each step could iteratively analyze different categories/classes of data from the M windows.
 
+
+- Caching did indeed improve wall times
+    => Results object is summarized, 10 records checked and written to S3.
+    => Noticed that the site-sample exploded table only has one partition, and not sorted
+        - Observed writing csv (630 MB)
+        - Sorting by position ascendingly & repartitioning to 200 tables
+            => This halved the time!!!!!!!!
+        - Loci burden has 200 partitions, and is ~340 KB
+
+- Summary:
+  a). App code updates offer wall time updates
+  b). Supplied config helped improving the distribution of load across apps.
+  c). Increase the number of concurrent that could run
+
+  => Replicate "b-c" given knowledge of a
+      - Test was with chr18, took 50% less time
+      - Without numExecutors, memory + cores = load was not split evenly
+      - Reintroducing even distribution (7.1% across 13 steps, 4.7% for "last")
+      - Rest of job is < 30s... lol
+      - Testing chr17:
+          => ~40minx no cahce
+          => ~20mins w/cache.
+          => ~10 mins ~ w/ cache, sort & repartition
+      - Sanity checking again with chr16:
+          => ~10 mins ~ w/ cache, sort & repartition
+      - With all 30 partitions:
+          => % of cluster per app changes frequently
+          => ~10 are usually less <1% (comes back to app config values)
+          => ~5 split across 3-6%
+          => 50% done after ~10 mins ~ w/ cache, sort & repartition
+          => >16:56 ; 11 done ~10 mins ~ w/ cache, sort & repartition
+          => Whole chromosome would be done same time, in step limit was 15
+              => Come back to load distribution & walltime (~3% per app).
 '''
+
