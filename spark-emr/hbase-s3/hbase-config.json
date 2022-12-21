@@ -1,0 +1,18 @@
+[
+    {
+        "Classification": "hbase-site",
+        "Properties": {
+            "hbase.rootdir": "s3://band-cloud-audio-validation/hbase_replication",
+            "hbase.wal.dir": "s3://band-cloud-audio-validation/walter-wal",
+            "hbase.hregion.max.filesize": "500000000",
+            "hbase.bucketcache.size": "600000"
+        }
+      },
+      {
+        "Classification": "hbase",
+        "Properties": {
+            "hbase.emr.storageMode": "s3",
+            "hbase.emr.readreplica.enabled": "false"
+        }
+      }
+]

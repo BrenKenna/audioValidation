@@ -1,0 +1,182 @@
+
+- Bunch of apps run, bunch of apps complete
+
+
+- HBase master logs
+
+***.***.***.***:***.***.***.*** INFO  [master:store-WAL-Roller] wal.AbstractFSWAL: Rolled WAL /user/hbase/WAL/MasterData/WALs/ip-***-***-***-***.eu-west-1.compute.internal,16000
+,***.***.***.***/ip-***-***-***-***.eu-west-1.compute.internal%***.***.***.***.***.***.***.*** with entries=0, filesize=83 B; new WAL /user/hbase/WAL/MasterData/WALs
+/ip-***-***-***-***.eu-west-1.compute.internal,***.***.***.***/ip-***-***-***-***.eu-west-1.compute.internal%***.***.***.***.***.***.***.***
+***.***.***.***:***.***.***.*** INFO  [Log-Archiver-0] wal.AbstractFSWAL: Archiving hdfs://ip-***-***-***-***.eu-west-1.compute.internal:8020/user/hbase/WAL/MasterData/WALs/ip-1
+***.***.***.***.eu-west-1.compute.internal,***.***.***.***/ip-***-***-***-***.eu-west-1.compute.internal%***.***.***.***.***.***.***.*** to hdfs://ip-***-***-***-***
+1.eu-west-1.compute.internal:8020/user/hbase/WAL/MasterData/oldWALs/ip-***-***-***-***.eu-west-1.compute.internal%***.***.***.***.***.***.***.***
+***.***.***.***:***.***.***.*** INFO  [Log-Archiver-0] region.MasterRegionUtils: Moved hdfs://ip-***-***-***-***.eu-west-1.compute.internal:8020/user/hbase/WAL/MasterData/oldWAL
+s/ip-***-***-***-***.eu-west-1.compute.internal%***.***.***.***.***.***.***.*** to hdfs://ip-***-***-***-***.eu-west-1.compute.internal:8020/user/hbase/WAL/oldWALs/i
+p-***.***.***.***.eu-west-1.compute.internal%***.***.***.***.***.***.***.***$masterlocalwal$
+
+
+
+- Can get info about disabling & deleting tables
+
+***.***.***.***:***.***.***.*** INFO  [RpcServer.default.FPBQ.Fifo.handler=22,queue=1,port=16000] master.HMaster: Client=root//***.***.***.*** disable genoDose
+***.***.***.***:***.***.***.*** INFO  [PEWorker-16] hbase.MetaTableAccessor: Updated tableName=genoDose, state=DISABLING in hbase:meta
+***.***.***.***:***.***.***.*** INFO  [PEWorker-16] procedure.DisableTableProcedure: Set genoDose to state=DISABLING
+***.***.***.***:***.***.***.*** INFO  [PEWorker-16] procedure2.ProcedureExecutor: Initialized subprocedures=[{pid=83, ppid=82, state=RUNNABLE:REGION_STATE_TRANSITION_CLOSE; TransitRegionStateProcedure table=genoDose, region=***.***.***.***e***.***.***.***f, UNASSIGN}]
+***.***.***.***:***.***.***.*** INFO  [PEWorker-3] procedure.MasterProcedureScheduler: Took xlock for pid=83, ppid=82, state=RUNNABLE:REGION_STATE_TRANSITION_CLOSE; TransitRegionStateProcedure table=genoDose, region=***.***.***.***e***.***.***.***f, UNASSIGN
+***.***.***.***:***.***.***.*** INFO  [PEWorker-3] assignment.RegionStateStore: pid=83 updating hbase:meta row=***.***.***.***e***.***.***.***f, regionState=CLOSING, regionLocation=ip-***-***-***-***.eu-west-1.compute.internal,***.***.***.***
+***.***.***.***:***.***.***.*** INFO  [PEWorker-3] procedure2.ProcedureExecutor: Initialized subprocedures=[{pid=84, ppid=83, state=RUNNABLE; CloseRegionProcedure ***.***.***.***d
+***.***.***.***d34678f, server=ip-***-***-***-***.eu-west-1.compute.internal,***.***.***.***}]
+***.***.***.***:***.***.***.*** INFO  [PEWorker-4] assignment.RegionStateStore: pid=83 updating hbase:meta row=***.***.***.***e***.***.***.***f, regionState=CLOSED
+***.***.***.***:***.***.***.*** INFO  [PEWorker-4] procedure2.ProcedureExecutor: Finished subprocedure pid=84, resume processing ppid=83
+***.***.***.***:***.***.***.*** INFO  [PEWorker-4] procedure2.ProcedureExecutor: Finished pid=84, ppid=83, state=SUCCESS; CloseRegionProcedure ***.***.***.***e***.***.***.***f
+, server=ip-***-***-***-***.eu-west-1.compute.internal,***.***.***.*** in 2.7120 sec
+***.***.***.***:***.***.***.*** INFO  [PEWorker-2] procedure2.ProcedureExecutor: Finished subprocedure pid=83, resume processing ppid=82
+***.***.***.***:***.***.***.*** INFO  [PEWorker-2] procedure2.ProcedureExecutor: Finished pid=83, ppid=82, state=SUCCESS; TransitRegionStateProcedure table=genoDose, region=35
+***.***.***.***e***.***.***.***f, UNASSIGN in 2.7230 sec
+
+
+***.***.***.***:***.***.***.*** INFO  [PEWorker-5] procedure2.ProcedureExecutor: Finished pid=86, state=SUCCESS; CreateTableProcedure table=genoDose in 3.9970 sec
+***.***.***.***:***.***.***.*** INFO  [master/ip-***-***-***-***:16000.Chore.1] balancer.StochasticLoadBalancer: ed average imbalance=***.***.***.*** <= threshold(0.025). I
+f you want more aggressive balancing, either lower hbase.master.balancer.stochastic.minCostNeedBalance from 0.025 or increase the relative multiplier(s) of the specifi
+c cost function(s). functionCost=RegionCountSkewCostFunction : (multiplier=500.0, imbalance=0.0); PrimaryRegionCountSkewCostFunction : (not needed); MoveCostFunction :
+ (multiplier=7.0, imbalance=0.0); ServerLocalityCostFunction : (multiplier=25.0, imbalance=0.0); RackLocalityCostFunction : (multiplier=15.0, imbalance=0.0); TableSkew
+CostFunction : (multiplier=35.0, imbalance=0.0); RegionReplicaHostCostFunction : (not needed); RegionReplicaRackCostFunction : (not needed); ReadRequestCostFunction : 
+(multiplier=5.0, imbalance=***.***.***.***, need balance); WriteRequestCostFunction : (multiplier=5.0, imbalance=***.***.***.***, need balance); MemStoreSizeCost
+Function : (multiplier=5.0, imbalance=0.0); StoreFileCostFunction : (multiplier=5.0, imbalance=0.0); 
+
+
+- RegionServers little less, outside of IP logs
+
+***.***.***.***:***.***.***.*** INFO  [LruBlockCacheStatsExecutor] hfile.LruBlockCache: totalSize=7.93 MB, freeSize=10.57 GB, max=10.57 GB, blockCount=0, accesses=0, hits=0, h
+itRatio=0, cachingAccesses=0, cachingHits=0, cachingHitsRatio=0,evictions=1049, evicted=0, evictedPerRun=0.0
+***.***.***.***:***.***.***.*** INFO  [BucketCacheStatsExecutor] bucket.BucketCache: failedBlockAdditions=0, totalSize=585.94 GB, freeSize=585.94 GB, usedSize=0 B, cacheSize=0 B, accesses=0, hits=0, IOhitsPerSecond=0, IOTimePerHit=NaN, hitRatio=0,cachingAccesses=0, cachingHits=0, cachingHitsRatio=0,evictions=0, evicted=0, evictedPerRun=0.0, allocationFailCount=0
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.0] regionserver.HRegion: Flushing ***.***.***.***e***.***.***.***f 1/10 column families, dataSize=44.47 MB heapSize=128.34 MB; fileId={dataSize=10.27 MB, heapSize=19.83 MB, offHeapSize=0 B}
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.0] s3n.MultipartUploadOutputStream: close closed:false s3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/***.***.***.***e***.***.***.***f/fileId/6c53dfff8b324bbba***.***.***.***b
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.0] regionserver.DefaultStoreFlusher: Flushed memstore data size=10.27 MB at sequenceid=135 (bloomFilter=true), to=s3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/***.***.***.***e***.***.***.***f/fileId/6c53dfff8b324bbba***.***.***.***b
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.0] s3n.S3NativeFileSystem: Opening 's3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/***.***.***.***e***.***.***.***f/fileId/6c53dfff8b324bbba***.***.***.***b' for reading
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.0] s3n.S3NativeFileSystem: Opening 's3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/***.***.***.***e***.***.***.***f/fileId/6c53dfff8b324bbba***.***.***.***b' for reading
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.0] s3n.S3NativeFileSystem: Opening 's3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/***.***.***.***e***.***.***.***f/fileId/6c53dfff8b324bbba***.***.***.***b' for reading
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.0] s3n.S3NativeFileSystem: Opening 's3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/***.***.***.***e***.***.***.***f/fileId/6c53dfff8b324bbba***.***.***.***b' for reading
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.0] regionserver.HStore: Added s3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/***.***.***.***e***.***.***.***f/fileId/6c53dfff8b324bbba***.***.***.***b, entries=73039, sequenceid=135, filesize=6.0 M
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.0] regionserver.HRegion: Finished flush of dataSize ~10.27 MB/***.***.***.***, heapSize ~19.83 MB/***.***.***.***, currentSize=41.40 MB/***.***.***.*** for ***.***.***.***e***.***.***.***f in 741ms, sequenceid=135, compaction requested=false
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.1] regionserver.HRegion: Flushing ***.***.***.***e***.***.***.***f 4/10 column families, dataSize=41.75 MB heapSize=130.22 MB; varId={dataSize=7.06 MB, heapSize=17.76 MB, offHeapSize=0 B}; chrom={dataSize=5.05 MB, heapSize=16.23 MB, offHeapSize=0 B}; sampleId={dataSize=5.78 MB, heapSize=16.23 MB, offHeapSize=0 B}; pos={dataSize=5.19 MB, heapSize=16.23 MB, offHeapSize=0 B}
+
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020.logRoller] wal.AbstractFSWAL: Rolled WAL /user/hbase/WAL/WALs/ip-***-***-***-***.eu-west-1.compute.int
+ernal,***.***.***.***/ip-***-***-***-***.eu-west-1.compute.internal%***.***.***.***.***.***.***.*** with entries=349, filesize=128.42 MB; new WAL /user/hbase/W
+AL/WALs/ip-***-***-***-***.eu-west-1.compute.internal,***.***.***.***/ip-***-***-***-***.eu-west-1.compute.internal%***.***.***.***.***.***.***.***
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.0] regionserver.DefaultStoreFlusher: Flushed memstore data size=5.28 MB at sequenceid=319 (bloomFilter=true), to=s3://ba
+nd-cloud-audio-validation/hbase_replication/data/default/genoDose/***.***.***.***e***.***.***.***f/pos/b***.***.***.***eb8d20a9dbdd59126
+
+
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-shortCompactions-0] s3n.S3NativeFileSystem: Opening 's3://band-cloud-audio-validation/hbase_replicat
+ion/data/default/genoDose/***.***.***.***e***.***.***.***f/fileId/***.***.***.***d33adb5a2' for reading
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-longCompactions-0] throttle.PressureAwareThroughputController: ***.***.***.***e***.***.***.***f#chro
+m#compaction#24 average throughput is 3.52 MB/second, slept 0 time(s) and total slept time is 0 ms. 1 active operations remaining, total limit is 50.00 MB/second
+
+
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-longCompactions-0] regionserver.CompactSplit: Completed compaction region=genoDose,,***.***.***.***
+***.***.***.***e***.***.***.***f., storeName=***.***.***.***e***.***.***.***f/chrom, priority=13, startTime=***.***.***.***; duration=1sec
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-shortCompactions-0] throttle.PressureAwareThroughputController: ***.***.***.***e***.***.***.***f#fil
+eId#compaction#25 average throughput is 6.82 MB/second, slept 0 time(s) and total slept time is 0 ms. 0 active operations remaining, total limit is 50.00 MB/second
+
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-shortCompactions-0] regionserver.HStore: Starting compaction of [s3://band-cloud-audio-validation/hb
+ase_replication/data/default/genoDose/***.***.***.***e***.***.***.***f/varId/d9851b6cab***.***.***.***b***.***.***.***, s3://band-cloud-audio-validation/hbase_replication/data/
+default/genoDose/***.***.***.***e***.***.***.***f/varId/3368ea***.***.***.***cb0efa***.***.***.***, s3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/3563
+a***.***.***.***a***.***.***.***f/varId/fe48d6bd***.***.***.***d***.***.***.***e] into tmpdir=s3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/***.***.***.***
+***.***.***.***d34678f/.tmp, totalSize=18.9 M
+
+***.***.***.***:***.***.***.*** INFO  [RS_CLOSE_REGION-regionserver/ip-***-***-***-***:***.***.***.***] handler.UnassignRegionHandler: Close ***.***.***.***e***.***.***.***f
+***.***.***.***:***.***.***.*** INFO  [RS_CLOSE_REGION-regionserver/ip-***-***-***-***:***.***.***.***] regionserver.HRegion: Running close preflush of ***.***.***.***e***.***.***.***f
+***.***.***.***:***.***.***.*** INFO  [RS_CLOSE_REGION-regionserver/ip-***-***-***-***:***.***.***.***] regionserver.HRegion: Flushing ***.***.***.***e***.***.***.***f 10/10 column fami
+lies, dataSize=23.42 MB heapSize=72.12 MB
+
+***.***.***.***:***.***.***.*** INFO  [RS_CLOSE_REGION-regionserver/ip-***-***-***-***:***.***.***.***] regionserver.HStore: Added s3://band-cloud-audio-validation/hbase_replication/dat
+a/default/genoDose/***.***.***.***e***.***.***.***f/alt/ea***.***.***.***d37d0b8eee229, entries=116059, sequenceid=545, filesize=3.8 Mq
+
+
+***.***.***.***:***.***.***.*** INFO  [LruBlockCacheStatsExecutor] hfile.LruBlockCache: totalSize=8.43 MB, freeSize=10.57 GB, max=10.57 GB, blockCount=4, accesses=1474, hits=0, hitRatio=0, cachingAccesses=8, cachingHits=0, cachingHitsRatio=0,evictions=1409, evicted=0, evictedPerRun=0.0
+***.***.***.***:***.***.***.*** INFO  [BucketCacheStatsExecutor] bucket.BucketCache: failedBlockAdditions=0, totalSize=585.94 GB, freeSize=585.94 GB, usedSize=260 KB, cacheSize=256.33 KB, accesses=1474, hits=0, IOhitsPerSecond=0, IOTimePerHit=NaN, hitRatio=0,cachingAccesses=8, cachingHits=0, cachingHitsRatio=0,evictions=0, evicted=0, evictedPerRun=0.0, allocationFailCount=0
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020.logRoller] wal.AbstractFSWAL: Rolled WAL /user/hbase/WAL/WALs/ip-***-***-***-***.eu-west-1.compute.internal,***.***.***.***/ip-***-***-***-***.eu-west-1.compute.internal%***.***.***.***.***.***.***.*** with entries=190, filesize=66.94 MB; new WAL /user/hbase/WAL/WALs/ip-***-***-***-***.eu-west-1.compute.internal,***.***.***.***/ip-***-***-***-***.eu-west-1.compute.internal%***.***.***.***.***.***.***.***
+q
+
+
+
+# hdfs dfs -cat s3://bk-spark-cluster-tf/spark/j-2VE90OB47IPES/node/i-0569ede***.***.***.***/applications/hbase/hbase.log.***.***.***.***.gz | gzip -d - | less
+
+***.***.***.***:***.***.***.*** INFO  [ReadOnlyZKClient-ip-***-***-***-***.eu-west-1.compute.internal:***.***.***.***cd-EventThread] zookeeper.ClientCnxn: EventTh
+read shut down for session: ***.***.***.***b
+***.***.***.***:***.***.***.*** INFO  [main] mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /tmp/hadoop-yarn/staging/root/.staging/job_1671
+***.***.***.***
+***.***.***.***:***.***.***.*** WARN  [DataStreamer for file /tmp/hadoop-yarn/staging/root/.staging/job_***.***.***.***/libjars/commons-lang3-3.9.jar] hdfs
+.DataStreamer: Caught exception
+java.lang.InterruptedException
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Thread.join(Thread.java:1257)
+        at java.lang.Thread.join(Thread.java:1331)
+        at org.apache.hadoop.hdfs.DataStreamer.closeResponder(DataStreamer.java:986)
+        at org.apache.hadoop.hdfs.DataStreamer.endBlock(DataStreamer.java:640)
+        at org.apache.hadoop.hdfs.DataStreamer.run(DataStreamer.java:810)
+***.***.***.***:***.***.***.*** INFO  [main] input.FileInputFormat: Total input files to process : 1
+***.***.***.***:***.***.***.*** INFO  [main] lzo.GPLNativeCodeLoader: Loaded native gpl library
+***.***.***.***:***.***.***.*** INFO  [main] lzo.LzoCodec: Successfully loaded & initialized native-lzo library [hadoop-lzo rev ***.***.***.***cf53ff***.***.***.***f
+2c6cd495e8]
+***.***.***.***:***.***.***.*** INFO  [main] mapreduce.JobSubmitter: number of splits:1
+***.***.***.***:***.***.***.*** INFO  [main] Configuration.deprecation: yarn.resourcemanager.system-metrics-publisher.enabled is deprecated. Instead, use yarn
+.system-metrics-publisher.enabled
+
+
+# Nothing much in
+# hdfs dfs -cat s3://bk-spark-cluster-tf/spark/j-2VE90OB47IPES/node/i-0569ede***.***.***.***/applications/hbase/hbase-hbase-master-ip-***-***-***-***.log.***.***.***.***.gz | gzip -d | less
+
+
+# Nothing much in
+# hdfs dfs -cat s3://bk-spark-cluster-tf/spark/j-2VE90OB47IPES/node/i-***.***.***.***/applications/hbase/hbase-hbase-regionserver-ip-***-***-***-***.log.***.***.***.***.gz | gzip -d - | less
+
+
+
+# When one node is being hammered
+
+'''
+
+***.***.***.***:***.***.***.*** WARN  [RpcServer.default.FPBQ.Fifo.handler=25,queue=1,port=16020] regionserver.HRegion: Region is too busy due to exceeding memstore size limit.
+org.apache.hadoop.hbase.RegionTooBusyException: Over memstore limit=512.0 M, regionName=15ec***.***.***.***cb***.***.***.***cdc80a, server=ip-***-***-***-***.eu-west-1.compute.internal,***.***.***.***
+	at org.apache.hadoop.hbase.regionserver.HRegion.checkResources(HRegion.java:5136)
+	at org.apache.hadoop.hbase.regionserver.HRegion.batchMutate(HRegion.java:4606)
+	at org.apache.hadoop.hbase.regionserver.HRegion.batchMutate(HRegion.java:4544)
+	at org.apache.hadoop.hbase.regionserver.RSRpcServices.doBatchOp(RSRpcServices.java:1020)
+	at org.apache.hadoop.hbase.regionserver.RSRpcServices.doNonAtomicBatchOp(RSRpcServices.java:933)
+	at org.apache.hadoop.hbase.regionserver.RSRpcServices.doNonAtomicRegionMutation(RSRpcServices.java:897)
+	at org.apache.hadoop.hbase.regionserver.RSRpcServices.multi(RSRpcServices.java:2900)
+	at org.apache.hadoop.hbase.shaded.protobuf.generated.ClientProtos$ClientService$2.callBlockingMethod(ClientProtos.java:45831)
+	at org.apache.hadoop.hbase.ipc.RpcServer.call(RpcServer.java:392)
+	at org.apache.hadoop.hbase.ipc.CallRunner.run(CallRunner.java:133)
+	at org.apache.hadoop.hbase.ipc.RpcExecutor$Handler.run(RpcExecutor.java:359)
+	at org.apache.hadoop.hbase.ipc.RpcExecutor$Handler.run(RpcExecutor.java:339)
+***.***.***.***:***.***.***.*** INFO  [MemStoreFlusher.1] regionserver.DefaultStoreFlusher: Flushed memstore data size=30.18 MB at sequenceid=552 (bloomFilter=true), to=s3://XXXXXXXXXX/hbase_replication/data/default/genoDose/15ec***.***.***.***cb***.***.***.***cdc80a/fileId/2acf***.***.***.***beee2aca89e74df3
+***.***.***.***:***.***.***.*** WARN  [RpcServer.default.FPBQ.Fifo.handler=26,queue=2,port=16020] regionserver.HRegion: Region is too busy due to exceeding memstore size limit.
+
+
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-longCompactions-0] regionserver.HRegion: Starting compaction of 15ec***.***.***.***cb***.***.***.***cdc80a/alt in genoDose,,***.***.***.***ec***.***.***.***cb***.***.***.***cdc80a.
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-shortCompactions-0] regionserver.HRegion: Starting compaction of 15ec***.***.***.***cb***.***.***.***cdc80a/GT in genoDose,,***.***.***.***ec***.***.***.***cb***.***.***.***cdc80a.
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-shortCompactions-0] regionserver.HStore: Starting compaction of [s3://XXXXXXXXXX/hbase_replication/data/default/genoDose/15ec***.***.***.***cb***.***.***.***cdc80a/GT/e***.***.***.***f731e21ef, s3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/15ec***.***.***.***cb***.***.***.***cdc80a/GT/10ebee***.***.***.***deb, s3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/15ec***.***.***.***cb***.***.***.***cdc80a/GT/08191ad14a234ff***.***.***.***d290] into tmpdir=s3://band-cloud-audio-validation/hbase_replication/data/default/genoDose/15ec***.***.***.***cb***.***.***.***cdc80a/.tmp, totalSize=6.8 M
+
+
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-shortCompactions-0] throttle.PressureAwareThroughputController: 15ec***.***.***.***cb***.***.***.***cdc80a#GT#compaction#148 average throughput is 13.31 MB/second, slept 0 time(s) and total slept time is 0 ms. 1 active operations remaining, total limit is 50.00 MB/second
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-shortCompactions-0] s3n.MultipartUploadOutputStream: close closed:false s3://XXXXXXXXXX/hbase_replication/data/default/genoDose/15ec***.***.***.***cb***.***.***.***cdc80a/GT/902efc***.***.***.***cbda***.***.***.***fbf4c2
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-longCompactions-0] throttle.PressureAwareThroughputController: 15ec***.***.***.***cb***.***.***.***cdc80a#alt#compaction#149 average throughput is 12.39 MB/second, slept 0 time(s) and total slept time is 0 ms. 0 active operations remaining, total limit is 50.00 MB/second
+
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-longCompactions-0] s3n.MultipartUploadOutputStream: close closed:false s3://XXXXXXXXXX/hbase_replication/data/default/genoDose/15ec***.***.***.***cb***.***.***.***cdc80a/alt/ebbc30a5cd***.***.***.***aa***.***.***.***
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-shortCompactions-0] regionserver.HStore: Completed compaction of 3 (all) file(s) in 15ec***.***.***.***cb***.***.***.***cdc80a/GT of 15ec***.***.***.***cb***.***.***.***cdc80a into 902efc***.***.***.***cbda***.***.***.***fbf4c2(size=4.2 M), total size for store is 4.2 M. This selection was in queue for 0sec, and took 0sec to execute.
+
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-shortCompactions-0] regionserver.CompactSplit: Completed compaction 
+
+***.***.***.***:***.***.***.*** INFO  [RS_CLOSE_REGION-regionserver/ip-***-***-***-***:***.***.***.***] handler.UnassignRegionHandler: Close ***.***.***.***fea691e7db***.***.***.***cadf
+***.***.***.***:***.***.***.*** INFO  [RS_CLOSE_REGION-regionserver/ip-***-***-***-***:***.***.***.***] regionserver.HRegion: Closing region hbase:storefile,\x80\x00\x00\x00\x00\x00\x00\x***.***.***.***f40c065fea691e7db***.***.***.***cadf.
+***.***.***.***:***.***.***.*** INFO  [RS_CLOSE_REGION-regionserver/ip-***-***-***-***:***.***.***.***] regionserver.HRegion: Closed hbase:storefile,\x80\x00\x00\x00\x00\x00\x00\x***.***.***.***f40c065fea691e7db***.***.***.***cadf.
+***.***.***.***:***.***.***.*** INFO  [RS_CLOSE_REGION-regionserver/ip-***-***-***-***:***.***.***.***] regionserver.HRegionServer: Adding ***.***.***.***fea691e7db***.***.***.***cadf move to ip-***-***-***-***.eu-west-1.compute.internal,***.***.***.*** record at close sequenceid=2
+***.***.***.***:***.***.***.*** INFO  [RS_CLOSE_REGION-regionserver/ip-***-***-***-***:***.***.***.***] handler.UnassignRegionHandler: Closed ***.***.***.***fea691e7db***.***.***.***cadf
+
+
+***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-longCompactions-0] regionserver.HStore: Completed compaction of 3 (all) file(s) in 15ec***.***.***.***cb***.***.***.***cdc80a/pos of 15ec***.***.***.***cb***.***.***.***cdc80a into e34cb6c40bad***.***.***.***(size=6.1 M), total size for store is 6.1 M. This selection was in queue for 0sec, and took 0sec to execute.
+
+'''

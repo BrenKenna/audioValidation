@@ -21,16 +21,13 @@ resource "aws_emr_cluster" "spark-cluster" {
 
    # Cluster data
     name = "EMR Terraform Cluster"
-    release_label = "emr-6.7.0"
+    release_label = "emr-6.8.0"
     applications = [
         "Ganglia",
         "Spark",
-        "Livy",
-        "Zeppelin",
+        "Zookeeper",
         "Hive",
-        "Sqoop",
-        "Presto",
-        "Hue"
+        "HBase"
     ]
     service_role = "${aws_iam_role.sparkClusterRole.arn}"
     log_uri = "${var.cluster-general.loggingUri}"

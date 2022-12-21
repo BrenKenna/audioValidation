@@ -435,12 +435,12 @@ utting down.
 
 
 # Create & submit steps for jobs
-clusterID="j-SJZ0QUWQ6WLJ"
+clusterID="j-2HG94C68T9MRC"
 jobDir="1KG-Dosages"
 jobScript="s3://band-cloud-audio-validation/app/genoDoses/lociDosages-etl-step.py"
 chroms=$(seq 24 | sed 's/^/chr/' | xargs)
 dataBucket="s3://aws-roda-hcls-datalake/thousandgenomes_dragen/var_nested"
-chrom="chr16"
+chrom="chr20"
 partKey="chrom=${chrom}"
 dataDir="${dataBucket}/${partKey}"
 
@@ -602,8 +602,9 @@ cd /etc/spark/conf
           => % of cluster per app changes frequently
           => ~10 are usually less <1% (comes back to app config values)
           => ~5 split across 3-6%
-          => 50% done after ~10 mins ~ w/ cache, sort & repartition
-          => >16:56 ; 11 done ~10 mins ~ w/ cache, sort & repartition
+          => ~30% dones after ~10 mins
+          => Next ~30% done ~15 mins
+          => Last ~30% done after ~20mins
           => Whole chromosome would be done same time, in step limit was 15
               => Come back to load distribution & walltime (~3% per app).
 '''
