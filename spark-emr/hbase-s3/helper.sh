@@ -133,16 +133,23 @@ hbase org.apache.hadoop.hbase.mapreduce.ImportTsv \
 
 # Install parallel
 sudo amazon-linux-extras install -y epel
-sudo install -y parallel
+sudo yum install -y parallel
 
 
 # Create pre-split table
-hbase org.apache.hadoop.hbase.util.RegionSplitter \
+sudo hbase shell
+
+`
+disable 'genoDose'
+drop 'genoDose'
+`
+
+date; sudo hbase org.apache.hadoop.hbase.util.RegionSplitter \
     genoDose \
     HexStringSplit \
-    -c 10000 \
-    -f "varId, pos, ref, alt, sampleId, GT, fileId, jobId, chrom"
-
+    -c 120 \
+    -f varId:pos:ref:alt:sampleId:GT:fileId:jobId:chrom
+date
 
 # Rack em & stack em: N = 49200
 siteData="s3://band-cloud-audio-validation/1kg-genoDose-ETL/csvs/site/"
@@ -150,18 +157,19 @@ aws s3 ls --recursive ${siteData} | awk '$NF ~ /csv$/ { print "'${siteData}',"$N
 wc -l batchesToImport.txt
 
 
-# Set up the bulk-import tasks:  N = 49,200
+# Set up the bulk-import tasks:  N = 246 batches of 200 tasks
 bash setup-batch-imports.sh
 
 
 # Bundle into a way to run parallel jobs more easily
+#  Randomly shuffle both
 mkdir ~/parallel-jobs
-tree -fish batch-imports/ | \
+counter=0
+tree -fish batch-imports/ | sort -R | \
     awk ' $NF ~ /sh/ { print "bash ~/"$NF" 2>&1 > ~/"$NF".log"}'| \
     split -l 200 - ~/parallel-jobs/task-
 
-counter=0
-ls ~/parallel-jobs/ | while read line
+ls ~/parallel-jobs/ | sort -R | while read line
 do
     counter=$((${counter}+1))
     mv ~/parallel-jobs/${line} ~/parallel-jobs/task-${counter}.sh
@@ -170,43 +178,70 @@ done
 
 # Run N task scripts from parallel-set
 # 33385
-rm -f ~/parallel-jobs/task-1.log
-nohup $(parallel -kj 10 < ~/parallel-jobs/task-1.sh) 2>&1 ~/parallel-jobs/task-1.log &
-
-nohup $(parallel -kj 10 < ~/parallel-jobs/task-2.sh) 2>&1 ~/parallel-jobs/task-2.log &
-nohup $(parallel -kj 10 < ~/parallel-jobs/task-3.sh) 2>&1 ~/parallel-jobs/task-3.log &
-nohup $(parallel -kj 10 < ~/parallel-jobs/task-4.sh) 2>&1 ~/parallel-jobs/task-4.log &
-
-nohup $(parallel -kj 10 < ~/parallel-jobs/task-2.sh) 2>&1 ~/parallel-jobs/task-2.log &
-nohup $(parallel -kj 10 < ~/parallel-jobs/task-3.sh) 2>&1 ~/parallel-jobs/task-3.log &
-nohup $(parallel -kj 10 < ~/parallel-jobs/task-4.sh) 2>&1 ~/parallel-jobs/task-4.log &
-
-
-
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-1.sh) 2>&1 > ~/parallel-jobs/task-1.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-2.sh) 2>&1 > ~/parallel-jobs/task-2.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-3.sh) 2>&1 > ~/parallel-jobs/task-3.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-4.sh) 2>&1 > ~/parallel-jobs/task-4.log &
+sleep 10s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-5.sh) 2>&1 > ~/parallel-jobs/task-5.log &
+sleep 10s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-6.sh) 2>&1 > ~/parallel-jobs/task-6.log &
+sleep 10s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-7.sh) 2>&1 > ~/parallel-jobs/task-7.log &
+sleep 10s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-8.sh) 2>&1 > ~/parallel-jobs/task-8.log &
+sleep 10s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-9.sh) 2>&1 > ~/parallel-jobs/task-9.log &
+sleep 10s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-10.sh) 2>&1 > ~/parallel-jobs/task-10.log &
-
+sleep 30s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-11.sh) 2>&1 > ~/parallel-jobs/task-11.log &
+sleep 10s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-12.sh) 2>&1 > ~/parallel-jobs/task-12.log &
+sleep 10s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-13.sh) 2>&1 > ~/parallel-jobs/task-13.log &
-
-
+sleep 10s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-14.sh) 2>&1 > ~/parallel-jobs/task-14.log &
+sleep 10s
 nohup $(parallel -kj 10 < ~/parallel-jobs/task-15.sh) 2>&1 > ~/parallel-jobs/task-15.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-16.sh) 2>&1 > ~/parallel-jobs/task-16.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-17.sh) 2>&1 > ~/parallel-jobs/task-17.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-18.sh) 2>&1 > ~/parallel-jobs/task-18.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-19.sh) 2>&1 > ~/parallel-jobs/task-19.log &
+sleep 30s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-20.sh) 2>&1 > ~/parallel-jobs/task-20.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-21.sh) 2>&1 > ~/parallel-jobs/task-21.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-22.sh) 2>&1 > ~/parallel-jobs/task-22.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-23.sh) 2>&1 > ~/parallel-jobs/task-23.log &
 
 
-aws s3 sync \
-    s3://aws157-logs-prod-us-east-2/j-1ZAVI5ZXWH370/node/ . \
-    --exclude '*' \
-    --include 'applications/hbase/hbase*'
 
-aws s3 ls --recursive s3://myClusters/myCluster/node/ | \
-    awk ' $NF ~ /applications\/hbase\/hbase/ {print "s3://aws157-logs-prod-us-east-2/"$NF}' | \
-    while read line; do DIR=$(dirname ${line} | cut -d \/ -f 4-); mkdir -p ${DIR}; aws s3 cp ${line} ${DIR}/ ; done
+
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-24.sh) 2>&1 > ~/parallel-jobs/task-24.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-25.sh) 2>&1 > ~/parallel-jobs/task-25.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-26.sh) 2>&1 > ~/parallel-jobs/task-26.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-27.sh) 2>&1 > ~/parallel-jobs/task-27.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-28.sh) 2>&1 > ~/parallel-jobs/task-28.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-29.sh) 2>&1 > ~/parallel-jobs/task-29.log &
+sleep 10s
+nohup $(parallel -kj 10 < ~/parallel-jobs/task-30.sh) 2>&1 > ~/parallel-jobs/task-30.log &
+
 
 
 
@@ -219,6 +254,24 @@ do
         kill ${batchPID}
     fi
 done
+
+
+
+############################
+# 
+# Log Diving
+# 
+############################
+
+aws s3 sync \
+    s3://aws157-logs-prod-us-east-2/j-1ZAVI5ZXWH370/node/ . \
+    --exclude '*' \
+    --include 'applications/hbase/hbase*'
+
+aws s3 ls --recursive s3://myClusters/myCluster/node/ | \
+    awk ' $NF ~ /applications\/hbase\/hbase/ {print "s3://aws157-logs-prod-us-east-2/"$NF}' | \
+    while read line; do DIR=$(dirname ${line} | cut -d \/ -f 4-); mkdir -p ${DIR}; aws s3 cp ${line} ${DIR}/ ; done
+
 
 
 ############################################################
