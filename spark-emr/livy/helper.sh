@@ -269,11 +269,14 @@ requests.delete(
                     => Spring app talks to JobManager, as part of posting tracks.
                         => ToDo is a queue
                         => Polls do not delete until object exists on S3.
-                        => Active has queryable info 
-                        => Done, triggers last submission time for user above threshold session is killed
+                        => Active queue has queryable info 
+                        => Done queue, triggers last submission time for user above threshold session is killed
 
-                => Fetch results store in DynamoDB
+                => Fetch results stored in DynamoDB
+                        => Valid audio left alone.
+                        => Invalid audio/"malware" removed, and end-user emailed "naughty naughty"
                 => Needs to manage to rate at which they come in per user (reduce spamming)
+                        => Prevent misuse/abuse where someone can submit millions of jobs for one track, or nonsense
 {
     'code': '\nimport os\nos.environ["NUMBA_CACHE_DIR"] = "/tmp/NUMBA_CACHE_DIR/"\nfrom audioValidator.generator import generator\nmsg = dir(generator)\nprint(msg)\n',
     'completed': 1672329321678,
