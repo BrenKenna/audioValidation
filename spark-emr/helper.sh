@@ -291,3 +291,85 @@ aws kms list-keys \
 2022-12-01 11:13:59,927 - MainThread - botocore.hooks - DEBUG - Event session-initialized: calling handler <function attach_history_handler at 0x7f26af0c7950>
 
 """
+
+
+#################################
+# 
+# Cluster By DNS
+# 
+#################################
+
+# 
+ping -c 4 old.emr-clusters.ie
+
+'''
+PING ip-192-168-2-51.eu-west-1.compute.internal (192.168.2.51) 56(84) bytes of data.
+64 bytes from ip-192-168-2-51.eu-west-1.compute.internal (192.168.2.51): icmp_seq=1 ttl=255 time=0.144 ms
+64 bytes from ip-192-168-2-51.eu-west-1.compute.internal (192.168.2.51): icmp_seq=2 ttl=255 time=0.540 ms
+64 bytes from ip-192-168-2-51.eu-west-1.compute.internal (192.168.2.51): icmp_seq=3 ttl=255 time=0.159 ms
+64 bytes from ip-192-168-2-51.eu-west-1.compute.internal (192.168.2.51): icmp_seq=4 ttl=255 time=0.177 ms
+
+--- ip-192-168-2-51.eu-west-1.compute.internal ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3059ms
+rtt min/avg/max/mdev = 0.144/0.255/0.540/0.164 ms
+
+'''
+
+# New cluster
+ping -c 4 new.emr-clusters.ie
+
+'''
+
+PING ip-192-168-2-155.eu-west-1.compute.internal (192.168.2.155) 56(84) bytes of data.
+64 bytes from ip-192-168-2-155.eu-west-1.compute.internal (192.168.2.155): icmp_seq=1 ttl=255 time=0.303 ms
+64 bytes from ip-192-168-2-155.eu-west-1.compute.internal (192.168.2.155): icmp_seq=2 ttl=255 time=0.288 ms
+64 bytes from ip-192-168-2-155.eu-west-1.compute.internal (192.168.2.155): icmp_seq=3 ttl=255 time=0.356 ms
+64 bytes from ip-192-168-2-155.eu-west-1.compute.internal (192.168.2.155): icmp_seq=4 ttl=255 time=0.352 ms
+
+--- ip-192-168-2-155.eu-west-1.compute.internal ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3080ms
+rtt min/avg/max/mdev = 0.288/0.324/0.356/0.037 ms
+
+'''
+
+
+# Try submit spark job via dns
+sudo yum install java
+wget https://dlcdn.apache.org/spark/spark-3.3.1/spark-3.3.1-bin-hadoop3.tgz && \
+    tar -xvf spark-3.3.1-bin-hadoop3.tgz && \
+    rm -f spark-3.3.1-bin-hadoop3.tgz && \
+    cd spark-3.3.1-bin-hadoop3/
+
+./pyspark --help
+
+
+# Connection refused from master & bastion
+./pyspark \
+    --master "spark://new.emr-clusters.ie:7077" \
+    --deploy-mode "client"
+
+
+'''
+
+Connection refused: new.emr-clusters.ie/192.168.2.155:7077
+
+--> Spark Env
+export STANDALONE_SPARK_MASTER_HOST=ip-192-168-2-155.eu-west-1.compute.internal
+export SPARK_MASTER_PORT=7077
+
+--> Started master service on primary node
+  => Then above worked fine on PN
+  => No connection refused error on client but got below "Reason: All masters are unresponsive"
+
+
+22/12/28 17:01:15 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+22/12/28 17:02:17 ERROR StandaloneSchedulerBackend: Application has been killed. Reason: All masters are unresponsive! Giving up.
+22/12/28 17:02:17 WARN StandaloneSchedulerBackend: Application ID is not initialized yet.
+22/12/28 17:02:17 WARN StandaloneAppClient$ClientEndpoint: Drop UnregisterApplication(null) because has not yet connected to master
+22/12/28 17:02:17 ERROR AsyncEventQueue: Listener AppStatusListener threw an exception
+java.lang.NullPointerException: Cannot invoke "org.apache.spark.status.api.v1.ApplicationInfo.attempts()" because the return value of "org.apache.spark.status.AppStatusListener.appInfo()" is null
+22/12/28 17:02:17 ERROR SparkContext: Error initializing SparkContext.
+java.lang.IllegalArgumentException: requirement failed: Can only call getServletHandlers on a running MetricsSystem
+
+
+'''

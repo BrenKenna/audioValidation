@@ -13,3 +13,4 @@ spark-emr.tar.gz
 terraform.tfstate*
 data
 data/*
+repo-check

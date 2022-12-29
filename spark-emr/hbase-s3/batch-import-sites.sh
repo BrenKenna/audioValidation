@@ -30,7 +30,7 @@ rm -f batch-${count}_${jobId}-${chrom}.csv
 echo -e "\n\nImporting data from: /tmp/batch-${count}_${jobId}-${chrom}.csv"
 /usr/bin/time sudo hbase org.apache.hadoop.hbase.mapreduce.ImportTsv \
     -Dimporttsv.separator=',' \
-    -Dimporttsv.columns='HBASE_ROW_KEY, pos, ref, alt, sampleId, GT, fileId, jobId, chrom' \
+    -Dimporttsv.columns='HBASE_ROW_KEY, f:pos, f:ref, f:alt, f:sampleId, f:GT, f:fileId, f:jobId, f:chrom' \
     "genoDose" \
     /tmp/batch-${count}_${jobId}-${chrom}.csv
 

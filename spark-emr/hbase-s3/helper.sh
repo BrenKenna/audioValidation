@@ -148,7 +148,7 @@ date; sudo hbase org.apache.hadoop.hbase.util.RegionSplitter \
     genoDose \
     HexStringSplit \
     -c 120 \
-    -f varId:pos:ref:alt:sampleId:GT:fileId:jobId:chrom
+    -f f
 date
 
 # Rack em & stack em: N = 49200
@@ -165,7 +165,7 @@ bash setup-batch-imports.sh
 #  Randomly shuffle both
 mkdir ~/parallel-jobs
 counter=0
-tree -fish batch-imports/ | sort -R | \
+tree -fi batch-imports/ | grep -v "batch-imports/1/1.sh" | sort -R | \
     awk ' $NF ~ /sh/ { print "bash ~/"$NF" 2>&1 > ~/"$NF".log"}'| \
     split -l 200 - ~/parallel-jobs/task-
 
@@ -376,3 +376,28 @@ for node in $(echo -e "192.168.2.113 192.168.2.169 192.168.2.133 192.168.2.124 1
     ssh -i ~/.ssh/emrKey.pem hadoop@${node} "sudo systemctl stop hbase-regionserver; sleep 5s; sudo systemctl start hbase-regionserver; sleep 2s; sudo systemctl status hbase-regionserver"
 done
 
+#######################################
+# 
+# WAL EFS
+#   => BS-A mounts on all instances
+# 
+#######################################
+
+
+# 
+sudo yum -y install nfs-utils
+
+
+# 
+efs_dns="fs-01d7ded11f3a12725.efs.eu-west-1.amazonaws.com"
+mkdir -p ~/efs-mount-point
+sudo mount \
+    -t nfs \
+    -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport \
+    ${efs_dns}:/ \
+    ~/efs-mount-point
+
+
+# Test writing
+seq 3 > efs-mount-point/test.txt
+sudo chmod go+rw ~/efs-mount-point

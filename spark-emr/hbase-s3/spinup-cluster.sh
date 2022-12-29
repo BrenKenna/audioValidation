@@ -9,10 +9,10 @@ aws emr create-cluster \
   --ec2-attributes '{"KeyName": "emrKey",
       "AdditionalSlaveSecurityGroups": [""],
       "InstanceProfile": "arn:aws:iam::986224559876:instance-profile/spark-emr-profile",
-      "ServiceAccessSecurityGroup": "sg-0b2b66b607001bb78",
-      "SubnetId": "subnet-0f08469642efb1491",
-      "EmrManagedSlaveSecurityGroup": "sg-069eb2ad68f473519",
-      "EmrManagedMasterSecurityGroup": "sg-0d90ffb7814a100ee",
+      "ServiceAccessSecurityGroup": "sg-08822e27a969b6e81",
+      "SubnetId": "subnet-0d45a96a00e9b6d24",
+      "EmrManagedSlaveSecurityGroup": "sg-099eab6bffb4a9429",
+      "EmrManagedMasterSecurityGroup": "sg-043984f432481d160",
       "AdditionalMasterSecurityGroups": [""]}' \
   --service-role "arn:aws:iam::986224559876:role/sparkClusterRole" \
   --release-label "emr-6.8.0" \

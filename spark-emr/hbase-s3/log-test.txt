@@ -180,3 +180,84 @@ org.apache.hadoop.hbase.RegionTooBusyException: Over memstore limit=512.0 M, reg
 ***.***.***.***:***.***.***.*** INFO  [regionserver/ip-***-***-***-***:16020-longCompactions-0] regionserver.HStore: Completed compaction of 3 (all) file(s) in 15ec***.***.***.***cb***.***.***.***cdc80a/pos of 15ec***.***.***.***cb***.***.***.***cdc80a into e34cb6c40bad***.***.***.***(size=6.1 M), total size for store is 6.1 M. This selection was in queue for 0sec, and took 0sec to execute.
 
 '''
+
+
+With WAL on S3
+
+'''
+
+2022-12-21 15:00:08,427 WARN  [master/ip-192-168-2-37:16000:becomeActiveMaster] wal.AbstractProtobufLogWriter: Init output failed, path=s3://band-cloud-audio-validation/walter-wal/MasterData/WALs/ip-192-168-2-37.eu-west-1.compute.internal,16000,1671634798299/ip-192-168-2-37.eu-west-1.compute.internal%2C16000%2C1671634798299.1671634808289
+org.apache.hadoop.hbase.util.CommonFSUtils$StreamLacksCapabilityException: hflush
+        at org.apache.hadoop.hbase.io.asyncfs.AsyncFSOutputHelper.createOutput(AsyncFSOutputHelper.java:71)
+        at org.apache.hadoop.hbase.regionserver.wal.AsyncProtobufLogWriter.initOutput(AsyncProtobufLogWriter.java:193)
+        at org.apache.hadoop.hbase.regionserver.wal.AbstractProtobufLogWriter.init(AbstractProtobufLogWriter.java:162)
+        at org.apache.hadoop.hbase.wal.AsyncFSWALProvider.createAsyncWriter(AsyncFSWALProvider.java:115)
+        at org.apache.hadoop.hbase.regionserver.wal.AsyncFSWAL.createWriterInstance(AsyncFSWAL.java:720)
+        at org.apache.hadoop.hbase.regionserver.wal.AsyncFSWAL.createWriterInstance(AsyncFSWAL.java:130)
+        at org.apache.hadoop.hbase.regionserver.wal.AbstractFSWAL.rollWriter(AbstractFSWAL.java:841)
+        at org.apache.hadoop.hbase.regionserver.wal.AbstractFSWAL.rollWriter(AbstractFSWAL.java:548)
+        at org.apache.hadoop.hbase.regionserver.wal.AbstractFSWAL.init(AbstractFSWAL.java:489)
+        at org.apache.hadoop.hbase.wal.AbstractFSWALProvider.getWAL(AbstractFSWALProvider.java:160)
+        at org.apache.hadoop.hbase.wal.AbstractFSWALProvider.getWAL(AbstractFSWALProvider.java:62)
+        at org.apache.hadoop.hbase.wal.WALFactory.getWAL(WALFactory.java:296)
+        at org.apache.hadoop.hbase.master.region.MasterRegion.createWAL(MasterRegion.java:187)
+        at org.apache.hadoop.hbase.master.region.MasterRegion.bootstrap(MasterRegion.java:207)
+        at org.apache.hadoop.hbase.master.region.MasterRegion.create(MasterRegion.java:326)
+        at org.apache.hadoop.hbase.master.region.MasterRegionFactory.create(MasterRegionFactory.java:104)
+        at org.apache.hadoop.hbase.master.HMaster.finishActiveMasterInitialization(HMaster.java:866)
+        at org.apache.hadoop.hbase.master.HMaster.startActiveMasterManager(HMaster.java:2263)
+        at org.apache.hadoop.hbase.master.HMaster.lambda$run$0(HMaster.java:535)
+        at java.lang.Thread.run(Thread.java:750)
+2022-12-21 15:00:08,428 ERROR [master/ip-192-168-2-37:16000:becomeActiveMaster] wal.AsyncFSWALProvider: The RegionServer async write ahead log provider relies on the ability to call hflush for proper operation during component failures, but the current FileSystem does not support doing so. Please check the config value of 'hbase.wal.dir' and ensure it points to a FileSystem mount that has suitable capabilities for output streams.
+2022-12-21 15:00:08,461 INFO  [master/ip-192-168-2-37:16000:becomeActiveMaster] s3n.S3NativeFileSystem: rename s3://band-cloud-audio-validation/walter-wal/MasterData/WALs/ip-192-168-2-37.eu-west-1.compute.internal,16000,1671634798299/ip-192-168-2-37.eu-west-1.compute.internal%2C16000%2C1671634798299.1671634808289 s3://band-cloud-audio-validation/walter-wal/MasterData/oldWALs/ip-192-168-2-37.eu-west-1.compute.internal%2C16000%2C1671634798299.1671634808289 using algorithm version 1
+2022-12-21 15:00:08,598 INFO  [master/ip-192-168-2-37:16000:becomeActiveMaster] wal.AbstractFSWAL: Closed WAL: AsyncFSWAL ip-192-168-2-37.eu-west-1.compute.internal%2C16000%2C1671634798299:(num 1671634808289)
+2022-12-21 15:00:08,601 ERROR [master/ip-192-168-2-37:16000:becomeActiveMaster] master.HMaster: Failed to become active master
+java.io.IOException: cannot get log writer
+        at org.apache.hadoop.hbase.wal.AsyncFSWALProvider.createAsyncWriter(AsyncFSWALProvider.java:128)
+        at org.apache.hadoop.hbase.regionserver.wal.AsyncFSWAL.createWriterInstance(AsyncFSWAL.java:720)
+        at org.apache.hadoop.hbase.regionserver.wal.AsyncFSWAL.createWriterInstance(AsyncFSWAL.java:130)
+        at org.apache.hadoop.hbase.regionserver.wal.AbstractFSWAL.rollWriter(AbstractFSWAL.java:841)
+        at org.apache.hadoop.hbase.regionserver.wal.AbstractFSWAL.rollWriter(AbstractFSWAL.java:548)
+
+
+
+- With EFS
+
+2022-12-22 14:59:08,448 ERROR [master/ip-192-168-2-10:16000:becomeActiveMaster] region.MasterRegion: UNEXPECTED: WAL directory for MasterRegion is
+ missing. file:/mnt/efs-wal/MasterData/WALs is unexpectedly missing.
+2022-12-22 14:59:08,497 INFO  [master/ip-192-168-2-10:16000:becomeActiveMaster] wal.AbstractFSWAL: WAL configuration: blocksize=256 MB, rollsize=1
+28 MB, prefix=ip-192-168-2-10.eu-west-1.compute.internal%2C16000%2C1671721142707, suffix=, logDir=file:/mnt/efs-wal/MasterData/WALs/ip-192-168-2-1
+0.eu-west-1.compute.internal,16000,1671721142707, archiveDir=file:/mnt/efs-wal/MasterData/oldWALs, maxLogs=10
+2022-12-22 14:59:08,529 WARN  [master/ip-192-168-2-10:16000:becomeActiveMaster] wal.AbstractProtobufLogWriter: Init output failed, path=file:/mnt/
+efs-wal/MasterData/WALs/ip-192-168-2-10.eu-west-1.compute.internal,16000,1671721142707/ip-192-168-2-10.eu-west-1.compute.internal%2C16000%2C167172
+1142707.1671721148503
+org.apache.hadoop.hbase.util.CommonFSUtils$StreamLacksCapabilityException: hflush
+        at org.apache.hadoop.hbase.io.asyncfs.AsyncFSOutputHelper.createOutput(AsyncFSOutputHelper.java:71)
+        at org.apache.hadoop.hbase.regionserver.wal.AsyncProtobufLogWriter.initOutput(AsyncProtobufLogWriter.java:193)
+        at org.apache.hadoop.hbase.regionserver.wal.AbstractProtobufLogWriter.init(AbstractProtobufLogWriter.java:162)
+        at org.apache.hadoop.hbase.wal.AsyncFSWALProvider.createAsyncWriter(AsyncFSWALProvider.java:115)
+        at org.apache.hadoop.hbase.regionserver.wal.AsyncFSWAL.createWriterInstance(AsyncFSWAL.java:720)
+        at org.apache.hadoop.hbase.regionserver.wal.AsyncFSWAL.createWriterInstance(AsyncFSWAL.java:130)
+        at org.apache.hadoop.hbase.regionserver.wal.AbstractFSWAL.rollWriter(AbstractFSWAL.java:841)
+        at org.apache.hadoop.hbase.regionserver.wal.AbstractFSWAL.rollWriter(AbstractFSWAL.java:548)
+        at org.apache.hadoop.hbase.regionserver.wal.AbstractFSWAL.init(AbstractFSWAL.java:489)
+        at org.apache.hadoop.hbase.wal.AbstractFSWALProvider.getWAL(AbstractFSWALProvider.java:160)
+        at org.apache.hadoop.hbase.wal.AbstractFSWALProvider.getWAL(AbstractFSWALProvider.java:62)
+        at org.apache.hadoop.hbase.wal.WALFactory.getWAL(WALFactory.java:296)
+        at org.apache.hadoop.hbase.master.region.MasterRegion.createWAL(MasterRegion.java:187)
+        at org.apache.hadoop.hbase.master.region.MasterRegion.open(MasterRegion.java:241)
+        at org.apache.hadoop.hbase.master.region.MasterRegion.create(MasterRegion.java:322)
+        at org.apache.hadoop.hbase.master.region.MasterRegionFactory.create(MasterRegionFactory.java:104)
+        at org.apache.hadoop.hbase.master.HMaster.finishActiveMasterInitialization(HMaster.java:866)
+        at org.apache.hadoop.hbase.master.HMaster.startActiveMasterManager(HMaster.java:2263)
+        at org.apache.hadoop.hbase.master.HMaster.lambda$run$0(HMaster.java:535)
+        at java.lang.Thread.run(Thread.java:750)
+2022-12-22 14:59:08,530 ERROR [master/ip-192-168-2-10:16000:becomeActiveMaster] wal.AsyncFSWALProvider: The RegionServer async write ahead log pro
+vider relies on the ability to call hflush for proper operation during component failures, but the current FileSystem does not support doing so. P
+lease check the config value of 'hbase.wal.dir' and ensure it points to a FileSystem mount that has suitable capabilities for output streams.
+2022-12-22 14:59:08,548 INFO  [master/ip-192-168-2-10:16000:becomeActiveMaster] wal.AbstractFSWAL: Closed WAL: AsyncFSWAL ip-192-168-2-10.eu-west-
+1.compute.internal%2C16000%2C1671721142707:(num 1671721148503)
+2022-12-22 14:59:08,550 ERROR [master/ip-192-168-2-10:16000:becomeActiveMaster] master.HMaster: Failed to become active master
+java.io.IOException: cannot get log writer
+
+'''

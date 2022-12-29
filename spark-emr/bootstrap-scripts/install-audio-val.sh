@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install core packages
-sudo yum install -y libsndfile.x86_64 libsndfile-utils.x86_64 libsndfile-devel.x86_64
+sudo yum install -y libsndfile.x86_64 libsndfile-utils.x86_64 libsndfile-devel.x86_64 nfs-utils
 sudo pip3 install pysoundfile
 sudo pip3 install librosa matplotlib numpy pandas scikit-learn
 sudo pip3 install boto3
@@ -40,3 +40,14 @@ mkdir -m 777 /tmp/NUMBA_CACHE_DIR
 ## print(audioVal.data)
 # '
 
+# Mount EFS
+efs_dns="fs-01d7ded11f3a12725.efs.eu-west-1.amazonaws.com"
+mkdir -p /mnt/efs-wal
+sudo mount \
+    -t nfs \
+    -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport \
+    ${efs_dns}:/ \
+    /mnt/efs-wal
+sudo chmod go+rw /mnt/efs-wal
+randN=$(( ( RANDOM % 10 ) + 1 )) 
+seq 3 > /mnt/efs-wal/test-${randN}.txt
