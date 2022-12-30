@@ -1,0 +1,82 @@
+UNIT                                   LOAD   ACTIVE     SUB          DESCRIPTION
+  acpid.service                          loaded active     running      ACPI Event Daemon
+  amazon-ssm-agent.service               loaded active     running      amazon-ssm-agent
+  apppusher.service                      loaded activating auto-restart EMR process for collecting metrics/logs from the cluster.
+  atd.service                            loaded active     running      Job spooling tools
+  auditd.service                         loaded active     running      Security Auditing Service
+  cgconfig.service                       loaded active     exited       Control Group configuration service
+  chronyd.service                        loaded active     running      NTP client/server
+  cloud-config.service                   loaded active     exited       Apply the settings specified in cloud-config
+  cloud-final.service                    loaded active     exited       Execute cloud user/final scripts
+  cloud-init-local.service               loaded active     exited       Initial cloud-init job (pre-networking)
+  cloud-init.service                     loaded active     exited       Initial cloud-init job (metadata service crawler)
+  crond.service                          loaded active     running      Command Scheduler
+  dbus.service                           loaded active     running      D-Bus System Message Bus
+  ganglia-rrdcached.service              loaded active     running      rrdcached for ganglia
+  getty@tty1.service                     loaded active     running      Getty on tty1
+  gmetad.service                         loaded active     running      Ganglia gmetad
+  gmond.service                          loaded active     running      Ganglia gmond
+  gssproxy.service                       loaded active     running      GSSAPI Proxy Daemon
+  hadoop-hdfs-journalnode.service        loaded active     running      Hadoop journalnode
+  hadoop-hdfs-namenode.service           loaded active     running      Hadoop namenode
+  hadoop-hdfs-zkfc.service               loaded active     running      Hadoop zkfc
+  hadoop-mapreduce-historyserver.service loaded active     running      Hadoop historyserver
+  hadoop-yarn-proxyserver.service        loaded active     running      Hadoop proxyserver
+  hadoop-yarn-resourcemanager.service    loaded active     running      Hadoop resourcemanager
+  hadoop-yarn-timelineserver.service     loaded active     running      Hadoop timelineserver
+  hbase-master.service                   loaded active     running      HBase master daemon
+  hbase-rest.service                     loaded active     running      HBase rest daemon
+  hbase-thrift.service                   loaded active     running      HBase thrift daemon
+  hive-server2.service                   loaded active     running      Hive Server2
+  httpd.service                          loaded active     running      Apache Web Server
+  ic-heartbeat-monitor.service           loaded active     running      Monitor of heartbeat file for instance controller
+  ic-zookeeper-quorum.service            loaded active     running      Zookeeper server used for EMR instance controller coordination in multi master mode
+  instance-controller.service            loaded active     running      EMR process on every node on an EMR cluster
+   irqbalance.service                     loaded active     running      irqbalance daemon
+  kmod-static-nodes.service              loaded active     exited       Create list of required static device nodes for the current kernel
+  libinstance-controller-java.service    loaded active     exited       Install security keys from instance metadata and start instance controller
+  libstoragemgmt.service                 loaded active     running      libstoragemgmt plug-in server daemon
+  livy-server.service                    loaded active     running      Starts Livy Server
+  log4j-cve-2021-44228-hotpatch.service  loaded active     running      Run the CVE-2021-44228 hotfix script
+  logpusher.service                      loaded active     running      EMR process on every node of an EMR cluster for collecting logs
+  lvm2-lvmetad.service                   loaded active     running      LVM2 metadata daemon
+  lvm2-monitor.service                   loaded active     exited       Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling
+  mariadb.service                        loaded active     running      MariaDB database server
+  metricscollector.service               loaded active     running      EMR metrics collector daemon
+  network.service                        loaded active     running      LSB: Bring up/down networking
+  nginx.service                          loaded active     running      The NGINX HTTP and reverse proxy server
+  postfix.service                        loaded active     running      Postfix Mail Transport Agent
+  rhel-dmesg.service                     loaded active     exited       Dump dmesg to /var/log/dmesg
+  rhel-domainname.service                loaded active     exited       Read and set NIS domainname from /etc/sysconfig/network
+  rhel-readonly.service                  loaded active     exited       Configure read-only root support
+  rngd-wake-threshold.service            loaded active     exited       Hardware RNG Entropy Gatherer Wake threshold service
+  rngd.service                           loaded active     running      Hardware RNG Entropy Gatherer Daemon
+  rsyslog.service                        loaded active     running      System Logging Service
+  serial-getty@ttyS0.service             loaded active     running      Serial Getty on ttyS0
+  spark-history-server.service           loaded active     running      Spark history-server
+  sshd-keygen.service                    loaded active     exited       OpenSSH Server Key Generation
+  sshd.service                           loaded active     running      OpenSSH server daemon
+  sysstat.service                        loaded active     exited       Resets System Activity Logs
+  systemd-fsck-root.service              loaded active     exited       File System Check on Root Device
+  systemd-hwdb-update.service            loaded active     exited       Rebuild Hardware Database
+  systemd-journal-catalog-update.service loaded active     exited       Rebuild Journal Catalog
+  systemd-journal-flush.service          loaded active     exited       Flush Journal to Persistent Storage
+  systemd-journald.service               loaded active     running      Journal Service
+  systemd-logind.service                 loaded active     running      Login Service
+   systemd-modules-load.service           loaded active     exited       Load Kernel Modules
+  systemd-random-seed.service            loaded active     exited       Load/Save Random Seed
+  systemd-remount-fs.service             loaded active     exited       Remount Root and Kernel File Systems
+  systemd-sysctl.service                 loaded active     exited       Apply Kernel Variables
+● systemd-tmpfiles-clean.service         loaded failed     failed       Cleanup of Temporary Directories
+  systemd-tmpfiles-setup-dev.service     loaded active     exited       Create Static Device Nodes in /dev
+● systemd-tmpfiles-setup.service         loaded failed     failed       Create Volatile Files and Directories
+  systemd-udev-settle.service            loaded active     exited       udev Wait for Complete Device Initialization
+  systemd-udev-trigger.service           loaded active     exited       udev Coldplug all Devices
+  systemd-udevd.service                  loaded active     running      udev Kernel Device Manager
+  systemd-update-done.service            loaded active     exited       Update is Completed
+  systemd-update-utmp.service            loaded active     exited       Update UTMP about System Boot/Shutdown
+  systemd-user-sessions.service          loaded active     exited       Permit User Sessions
+  systemd-vconsole-setup.service         loaded active     exited       Setup Virtual Console
+  tomcat.service                         loaded active     running      Apache Tomcat Web Application Container
+  update-motd.service                    loaded active     exited       Dynamically Generate Message Of The Day
+  zookeeper-server.service               loaded active     running      ZooKeeper daemon

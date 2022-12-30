@@ -292,6 +292,20 @@ requests.delete(
     'state': u'available'
 }
 
+export PYTHONPATH="$PWD/pyspark.zip:$PWD/py4j-0.10.9.3-src.zip"
+export PYSPARK_PYTHON="/usr/bin/python3"
+aws emr add-steps \
+    --region "eu-west-1" \
+    --cluster-id "j-3P7LMVG1EUGTQ" \
+    --steps file:///home/ec2-user/example-step.json
+
+aws emr list-steps \
+    --region "eu-west-1" \
+    --cluster-id "j-3P7LMVG1EUGTQ" \
+    --step-ids "s-32LNFNY2W77S5"
+
+--> Worked fine, 5mins for 11 tracks => <30s per track
+   => Dataset is 2,646,000 compared to 86M x ~4k rows
 '''
 
 ```

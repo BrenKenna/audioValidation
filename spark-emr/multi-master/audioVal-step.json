@@ -1,0 +1,16 @@
+[
+    {
+        "Name": "Real Audio Data Test",
+        "ActionOnFailure": "CONTINUE",
+        "Type": "CUSTOM_JAR",
+        "Jar": "command-runner.jar",
+        "Args": [
+            "spark-submit",
+            "--deploy-mode", "cluster",
+            "--master", "yarn",
+            "--conf", "spark.yarn.submit.waitAppCompletion=true",
+            "--py-files", "s3://band-cloud-audio-validation/app/audioValidator/audioValidator.zip",
+            "s3://band-cloud-audio-validation/app/test/audioValidator-Test.py"
+        ]
+    }
+]
