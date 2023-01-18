@@ -91,7 +91,7 @@ artitions Vector(0, 1))
 """
 
 # Follow-up on active master logs
-primaryNodeLogs=s"3://bk-spark-cluster-tf/j-2ZZ4M65MSBWJ0/node/i-0b7859fb82a817121"
+primaryNodeLogs="j-2ZZ4M65MSBWJ0/node/i-0b7859fb82a817121"
 pnDaemon="${primaryNodeLogs}/daemons"
 pnApps="${primaryNodeLogs}/applications"
 
@@ -100,9 +100,9 @@ hdfs dfs -ls ${pnDaemon}/instance-state/ | grep "2022-12-30-12"
 hdfs dfs -cat ${pnDaemon}/instance-state/instance-state.log-2022-12-30-12-00.gz | gzip -d - | less
 
 
-ws s3 cp s3://bk-spark-cluster-tf/j-2ZZ4M65MSBWJ0/node/i-0b7859fb82a817121/applications/zookeeper/zookeeper-zookeeper-server-ip-192-168-2-15.log.gz ./
-aws s3 cp s3://bk-spark-cluster-tf/j-2ZZ4M65MSBWJ0/node/i-0bee9d521b61affcf/applications/zookeeper/zookeeper-zookeeper-server-ip-192-168-2-4.log.gz ./
-aws s3 cp s3://bk-spark-cluster-tf/j-2ZZ4M65MSBWJ0/node/i-0bd7948c9a693f555/applications/zookeeper/zookeeper-zookeeper-server-ip-192-168-2-157.log.gz ./
+aws s3 cp j-2ZZ4M65MSBWJ0/node/i-0b7859fb82a817121/applications/zookeeper/zookeeper-zookeeper-server-ip-192-168-2-15.log.gz ./
+aws s3 cp j-2ZZ4M65MSBWJ0/node/i-0bee9d521b61affcf/applications/zookeeper/zookeeper-zookeeper-server-ip-192-168-2-4.log.gz ./
+aws s3 cp j-2ZZ4M65MSBWJ0/node/i-0bd7948c9a693f555/applications/zookeeper/zookeeper-zookeeper-server-ip-192-168-2-157.log.gz ./
 
 ''' --> zookeeper-zookeeper-server-ip-192-168-2-15.log.gz
 
@@ -158,7 +158,5 @@ java.lang.InterruptedException
 rom /192.168.2.157:56042
 2022-12-30 11:55:57,568 [myid:2] - WARN  [RecvWorker:0:QuorumCnxManager$RecvWorker@1242] - Connection broken for id 0, my id = 2, error = 
 java.net.SocketException: Socket closed
-
-
----> 
+ 
 '''

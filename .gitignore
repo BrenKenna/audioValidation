@@ -14,3 +14,4 @@ terraform.tfstate*
 data
 data/*
 repo-check
+hive

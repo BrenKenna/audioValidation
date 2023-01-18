@@ -1,4 +1,3 @@
-
 aws emr create-cluster \
   --region "eu-west-1" \
   --applications Name=Spark Name=Hive Name=Ganglia Name=Zeppelin Name=Hue Name=Livy \
